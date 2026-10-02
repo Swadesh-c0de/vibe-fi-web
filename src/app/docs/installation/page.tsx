@@ -1,11 +1,13 @@
+import type { Metadata } from "next";
 import Link from "next/link";
+import React from "react";
 
-export const metadata = {
+export const metadata: Metadata = {
   title: "Installation Guide - Vibe-Fi Documentation",
   description: "Complete installation guide for Vibe-Fi on Arch Linux, macOS, Ubuntu, Debian, Fedora, and building from source.",
 };
 
-export default function InstallationDocsPage() {
+export default function InstallationDocsPage(): React.JSX.Element {
   return (
     <div>
       <div className="docs-breadcrumb">
@@ -43,7 +45,7 @@ export default function InstallationDocsPage() {
       </div>
 
       {/* Method 2: Arch Linux */}
-      <h2>2. Arch Linux & EndeavourOS</h2>
+      <h2>2. Arch Linux &amp; EndeavourOS</h2>
       <p>
         On Arch Linux and derivatives, install via the repository script or manual build:
       </p>
@@ -57,7 +59,7 @@ chmod +x install.sh
       </div>
 
       {/* Method 3: macOS */}
-      <h2>3. macOS (Apple Silicon & Intel)</h2>
+      <h2>3. macOS (Apple Silicon &amp; Intel)</h2>
       <p>
         Make sure you have <a href="https://brew.sh" target="_blank" rel="noopener noreferrer">Homebrew</a> installed.
         Vibe-Fi utilizes <code>mpv</code> and <code>yt-dlp</code>:
@@ -75,7 +77,7 @@ chmod +x install.sh
       </div>
 
       {/* Method 4: Ubuntu / Debian / Fedora */}
-      <h2>4. Ubuntu, Debian & Fedora</h2>
+      <h2>4. Ubuntu, Debian &amp; Fedora</h2>
       <p>Install the required build dependencies before compiling:</p>
 
       <h3>Ubuntu / Debian:</h3>

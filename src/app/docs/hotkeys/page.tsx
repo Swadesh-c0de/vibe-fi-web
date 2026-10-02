@@ -1,11 +1,23 @@
+import type { Metadata } from "next";
 import Link from "next/link";
+import React from "react";
 
-export const metadata = {
+export const metadata: Metadata = {
   title: "Hotkeys Reference - Vibe-Fi Documentation",
   description: "Complete list of keyboard shortcuts for Vibe-Fi terminal music player.",
 };
 
-const HOTKEY_GROUPS = [
+interface HotkeyDocItem {
+  key: string;
+  desc: string;
+}
+
+interface HotkeyDocGroup {
+  title: string;
+  items: HotkeyDocItem[];
+}
+
+const HOTKEY_GROUPS: HotkeyDocGroup[] = [
   {
     title: "Global & Navigation",
     items: [
@@ -48,7 +60,7 @@ const HOTKEY_GROUPS = [
   },
 ];
 
-export default function HotkeysDocsPage() {
+export default function HotkeysDocsPage(): React.JSX.Element {
   return (
     <div>
       <div className="docs-breadcrumb">
@@ -74,7 +86,7 @@ export default function HotkeysDocsPage() {
               <thead>
                 <tr>
                   <th style={{ width: "160px" }}>Shortcut</th>
-                  <th>Action & Description</th>
+                  <th>Action &amp; Description</th>
                 </tr>
               </thead>
               <tbody>

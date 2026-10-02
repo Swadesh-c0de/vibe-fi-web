@@ -1,4 +1,6 @@
+import type { Metadata, Viewport } from "next";
 import { JetBrains_Mono, Outfit, Bricolage_Grotesque } from "next/font/google";
+import React from "react";
 import "./globals.css";
 
 const jetbrainsMono = JetBrains_Mono({
@@ -19,7 +21,14 @@ const bricolage = Bricolage_Grotesque({
   display: "swap",
 });
 
-export const metadata = {
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 5,
+  themeColor: "#141617",
+};
+
+export const metadata: Metadata = {
   title: "vibe-fi — Terminal Music Player for Linux & macOS",
   description:
     "Fast, lightweight terminal music player. Stream YouTube audio, watch real-time visualizers, and read synchronized lyrics with under 35 MB of RAM.",
@@ -28,7 +37,11 @@ export const metadata = {
   },
 };
 
-export default function RootLayout({ children }) {
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}): React.JSX.Element {
   return (
     <html
       lang="en"
@@ -37,7 +50,7 @@ export default function RootLayout({ children }) {
       suppressHydrationWarning
     >
       <head>
-        {/* Inline Theme Initializer Script to prevent FOUC */}
+        {/* Inline Theme Initializer */}
         <script
           dangerouslySetInnerHTML={{
             __html: `

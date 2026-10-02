@@ -1,11 +1,13 @@
+import type { Metadata } from "next";
 import Link from "next/link";
+import React from "react";
 
-export const metadata = {
+export const metadata: Metadata = {
   title: "Getting Started - Vibe-Fi Documentation",
   description: "Overview and getting started guide for Vibe-Fi, the fast terminal music player for Linux & macOS.",
 };
 
-export default function DocsOverviewPage() {
+export default function DocsOverviewPage(): React.JSX.Element {
   return (
     <div>
       <div className="docs-breadcrumb">
@@ -26,7 +28,7 @@ export default function DocsOverviewPage() {
 
       <h2>Why Vibe-Fi?</h2>
       <p>
-        Most desktop music solutions come with trade-offs. Web & Electron apps like Spotify consume hundreds of megabytes of RAM
+        Most desktop music solutions come with trade-offs. Web &amp; Electron apps like Spotify consume hundreds of megabytes of RAM
         and noticeable CPU in the background. Traditional command-line players like <code>cmus</code> or <code>mpd</code> are lightweight,
         but require cumbersome configuration files, external daemons, and custom scripts just to stream a song from YouTube or show synced lyrics.
       </p>
@@ -83,7 +85,7 @@ vibe "https://www.youtube.com/watch?v=5qap5aO4i9A"`}</code></pre>
           <p className="card-link-desc">Instructions for Arch Linux, macOS, Ubuntu, Fedora, and building from source with CMake.</p>
         </Link>
         <Link href="/docs/usage" className="docs-card-link">
-          <div className="card-link-title">Usage & Workflow →</div>
+          <div className="card-link-title">Usage &amp; Workflow →</div>
           <p className="card-link-desc">Learn about YouTube streaming, local library indexing, playlists, and dotfiles integration.</p>
         </Link>
         <Link href="/docs/hotkeys" className="docs-card-link">

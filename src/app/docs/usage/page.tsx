@@ -1,11 +1,13 @@
+import type { Metadata } from "next";
 import Link from "next/link";
+import React from "react";
 
-export const metadata = {
+export const metadata: Metadata = {
   title: "Usage & Workflow - Vibe-Fi Documentation",
   description: "Learn how to use Vibe-Fi for YouTube streaming, local library playback, playlists, lyrics, and desktop integration.",
 };
 
-export default function UsageDocsPage() {
+export default function UsageDocsPage(): React.JSX.Element {
   return (
     <div>
       <div className="docs-breadcrumb">
@@ -13,10 +15,10 @@ export default function UsageDocsPage() {
         <span>/</span>
         <Link href="/docs">Docs</Link>
         <span>/</span>
-        <span className="current">Usage & Workflow</span>
+        <span className="current">Usage &amp; Workflow</span>
       </div>
 
-      <h1 className="docs-page-title">Usage & Workflow</h1>
+      <h1 className="docs-page-title">Usage &amp; Workflow</h1>
       <p className="docs-lead-text">
         Discover the full power of Vibe-Fi—from instant YouTube searches and synced lyrics to Linux desktop bar widgets.
       </p>
@@ -42,7 +44,9 @@ vibe "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
 vibe ~/Music/favorite-song.flac
 
 # 5. Restore last session position and playlist
-vibe -r`}</code></pre>
+vibe -r
+# or using the long-form CLI option:
+vibe --restore`}</code></pre>
       </div>
 
       <h2>Streaming YouTube in the TUI</h2>
@@ -71,7 +75,7 @@ vibe -r`}</code></pre>
         <li>Press <kbd>A</kbd> while highlighting any track to add it to a playlist.</li>
       </ul>
 
-      <h2>Playlists & Session Memory</h2>
+      <h2>Playlists &amp; Session Memory</h2>
       <p>
         Press <kbd>P</kbd> to view your saved playlists.
       </p>
@@ -80,7 +84,7 @@ vibe -r`}</code></pre>
         <li>If you close your terminal or reboot, press <kbd>R</kbd> or run <code>vibe -r</code> to restore your last track, exact seek timestamp, volume, and active visualizer.</li>
       </ul>
 
-      <h2 id="mpris">Linux MPRIS & Media Keys</h2>
+      <h2 id="mpris">Linux MPRIS &amp; Media Keys</h2>
       <p>
         On Linux, Vibe-Fi registers a native D-Bus MPRIS interface (<code>org.mpris.MediaPlayer2.vibefi</code>).
         This allows hardware keyboard media keys (Play, Pause, Next, Prev) to control Vibe-Fi automatically.
@@ -94,7 +98,7 @@ playerctl -p vibefi previous
 {`playerctl -p vibefi metadata --format "{{ artist }} - {{ title }}"`}</code></pre>
       </div>
 
-      <h2 id="waybar">Waybar & Hyprland Integration</h2>
+      <h2 id="waybar">Waybar &amp; Hyprland Integration</h2>
       <p>
         You can embed Vibe-Fi&apos;s current track and playback status directly in your <strong>Waybar</strong> panel:
       </p>

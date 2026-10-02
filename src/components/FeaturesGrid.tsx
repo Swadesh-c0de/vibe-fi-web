@@ -1,5 +1,16 @@
-export default function FeaturesGrid() {
-  const features = [
+import React from "react";
+
+export interface FeatureItem {
+  id: string;
+  icon: React.ReactNode;
+  badge: string;
+  title: string;
+  desc: string;
+  tag: string;
+}
+
+export default function FeaturesGrid(): React.JSX.Element {
+  const features: FeatureItem[] = [
     {
       id: "youtube",
       icon: (
@@ -84,27 +95,47 @@ export default function FeaturesGrid() {
   ];
 
   return (
-    <section className="section features-section" id="features">
+    <section className="py-8 sm:py-12" id="features">
       <div className="container">
-        <div className="section-head text-center">
-          <div className="section-badge">CORE CAPABILITIES</div>
-          <h2 className="section-title">Built for Modern Terminal Life</h2>
-          <p className="section-desc">
-            Everything you need for music in your workflow. Starts in milliseconds, runs in under 35 MB of RAM.
-          </p>
+        <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-1 sm:gap-4 border-b border-subtle pb-2.5 mb-5 sm:mb-6">
+          <h2 className="font-brand text-base sm:text-lg font-bold text-text-primary tracking-tight">
+            Core Capabilities
+          </h2>
+          <span className="text-[0.72rem] sm:text-xs font-mono text-text-muted">
+            &lt; 35 MB RAM · C++17 · Wayland &amp; X11 native
+          </span>
         </div>
 
-        <div className="features-grid-cards">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 lg:gap-5">
           {features.map((feat) => (
-            <div key={feat.id} className="feature-item-card" id={feat.id}>
-              <div className="feature-card-top">
-                <div className="feature-icon-box">{feat.icon}</div>
-                <span className="feature-badge">{feat.badge}</span>
+            <div
+              key={feat.id}
+              id={feat.id}
+              className="bg-surface border border-subtle rounded-[6px] p-3.5 sm:p-4.5 lg:p-5 flex flex-col justify-between transition-all duration-200 hover:border-strong hover:-translate-y-0.5 hover:shadow-sm"
+            >
+              <div>
+                <div className="flex items-center justify-between mb-3 sm:mb-4">
+                  <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-[6px] bg-surface-elevated border border-strong flex items-center justify-center text-sage shrink-0">
+                    <span className="[&>svg]:w-4 [&>svg]:h-4 sm:[&>svg]:w-4.5 sm:[&>svg]:h-4.5">
+                      {feat.icon}
+                    </span>
+                  </div>
+                  <span className="font-mono text-[0.66rem] sm:text-[0.68rem] font-bold text-amber bg-surface-elevated border border-strong/40 px-2 py-0.5 rounded-[4px]">
+                    {feat.badge}
+                  </span>
+                </div>
+                <h3 className="font-brand text-[0.98rem] sm:text-[1.05rem] lg:text-[1.1rem] font-bold mb-1.5 text-text-primary leading-snug">
+                  {feat.title}
+                </h3>
+                <p className="text-[0.8rem] sm:text-[0.84rem] leading-[1.55] text-text-secondary">
+                  {feat.desc}
+                </p>
               </div>
-              <h3 className="feature-item-title">{feat.title}</h3>
-              <p className="feature-item-desc">{feat.desc}</p>
-              <div className="feature-card-footer">
-                <span className="feature-tag-pill">{feat.tag}</span>
+
+              <div className="pt-3 mt-4 border-t border-subtle/80 flex items-center justify-between">
+                <span className="font-mono text-[0.68rem] sm:text-[0.72rem] text-text-muted">
+                  {feat.tag}
+                </span>
               </div>
             </div>
           ))}
