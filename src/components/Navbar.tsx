@@ -16,7 +16,8 @@ export default function Navbar(): React.JSX.Element {
     const now = Date.now();
 
     if (cachedStars && cachedTime && now - parseInt(cachedTime, 10) < 1000 * 60 * 15) {
-      setStars(cachedStars);
+      const timer = setTimeout(() => setStars(cachedStars), 0);
+      return () => clearTimeout(timer);
     } else {
       fetch("https://api.github.com/repos/Swadesh-c0de/vibe-fi")
         .then((res) => {
