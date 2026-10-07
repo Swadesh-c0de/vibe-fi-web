@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import Link from "next/link";
 
 interface ShortcutItem {
@@ -167,6 +167,15 @@ const FILTER_TABS = [
   { id: "library", label: "Library" },
 ];
 
+const KEY_TO_SHORTCUT_MAP = new Map<string, string>();
+for (const group of SHORTCUT_GROUPS) {
+  for (const item of group.items) {
+    for (const tk of item.triggerKeys) {
+      KEY_TO_SHORTCUT_MAP.set(tk.toLowerCase(), item.id);
+    }
+  }
+}
+
 export default function HotkeysSection(): React.JSX.Element {
   const [activeTab, setActiveTab] = useState<string>("all");
   const [activeShortcutId, setActiveShortcutId] = useState<string | null>(null);
@@ -187,26 +196,16 @@ export default function HotkeysSection(): React.JSX.Element {
         return;
       }
 
-      const key = e.key;
-
-      for (const group of SHORTCUT_GROUPS) {
-        for (const item of group.items) {
-          if (
-            item.triggerKeys.some(
-              (tk) => tk.toLowerCase() === key.toLowerCase()
-            )
-          ) {
-            if (key === " ") {
-              e.preventDefault();
-            }
-            setActiveShortcutId(item.id);
-            clearTimeout(timeoutId);
-            timeoutId = setTimeout(() => {
-              setActiveShortcutId(null);
-            }, 1200);
-            return;
-          }
+      const shortcutId = KEY_TO_SHORTCUT_MAP.get(e.key.toLowerCase());
+      if (shortcutId) {
+        if (e.key === " ") {
+          e.preventDefault();
         }
+        setActiveShortcutId(shortcutId);
+        clearTimeout(timeoutId);
+        timeoutId = setTimeout(() => {
+          setActiveShortcutId(null);
+        }, 1200);
       }
     };
 
@@ -217,12 +216,13 @@ export default function HotkeysSection(): React.JSX.Element {
     };
   }, []);
 
-  const visibleGroups = SHORTCUT_GROUPS.filter(
-    (g) => activeTab === "all" || g.id === activeTab
+  const visibleGroups = useMemo(
+    () => SHORTCUT_GROUPS.filter((g) => activeTab === "all" || g.id === activeTab),
+    [activeTab]
   );
 
   return (
-    <section className="py-8 sm:py-12" id="hotkeys">
+    <section className="py-8 sm:py-12 content-auto" id="hotkeys">
       <div className="container max-w-[1020px]">
         {/* Clean, Compact Section Header */}
         <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-1 sm:gap-4 border-b border-subtle pb-2.5 mb-4 sm:mb-6">
@@ -251,7 +251,7 @@ export default function HotkeysSection(): React.JSX.Element {
                       inline: "center",
                     });
                   }}
-                  className={`px-2.5 sm:px-3 py-1 rounded-[6px] text-[0.72rem] sm:text-xs font-mono font-medium transition-all duration-150 whitespace-nowrap shrink-0 cursor-pointer ${isActive
+                  className={`px-2.5 sm:px-3 py-1 rounded-[6px] text-[0.72rem] sm:text-xs font-mono font-medium transition-colors duration-150 whitespace-nowrap shrink-0 cursor-pointer ${isActive
                     ? "bg-surface-elevated text-text-primary border border-strong shadow-xs font-semibold"
                     : "text-text-muted hover:text-text-primary hover:bg-surface-subtle border border-transparent"
                     }`}
@@ -273,7 +273,7 @@ export default function HotkeysSection(): React.JSX.Element {
           {visibleGroups.map((group) => (
             <div
               key={group.id}
-              className="bg-surface border border-subtle rounded-[6px] p-3 sm:p-4 md:p-4.5 transition-all duration-200 shadow-xs"
+              className="bg-surface border border-subtle rounded-[6px] p-3 sm:p-4 md:p-4.5 transition-[border-color,box-shadow] duration-150 shadow-xs"
             >
               {/* Category Header */}
               <div className="flex items-center justify-between pb-2 mb-1.5 border-b border-subtle">
@@ -298,7 +298,7 @@ export default function HotkeysSection(): React.JSX.Element {
                         setActiveShortcutId(item.id);
                         setTimeout(() => setActiveShortcutId(null), 1000);
                       }}
-                      className={`flex items-center justify-between py-1.5 sm:py-2 px-1.5 sm:px-2 -mx-1 rounded-[6px] transition-all duration-150 cursor-pointer ${isActive
+                      className={`flex items-center justify-between py-1.5 sm:py-2 px-1.5 sm:px-2 -mx-1 rounded-[6px] transition-colors duration-150 cursor-pointer ${isActive
                         ? "bg-surface-elevated ring-1"
                         : "hover:bg-surface-elevated/50"
                         }`}
@@ -321,7 +321,7 @@ export default function HotkeysSection(): React.JSX.Element {
                         {item.keys.map((k, kIdx) => (
                           <kbd
                             key={kIdx}
-                            className={`inline-flex items-center justify-center min-w-[24px] h-[22px] sm:h-[24px] px-1.5 rounded-[6px] font-mono text-[0.7rem] sm:text-[0.72rem] font-bold tracking-tight transition-all duration-150 select-none ${isActive
+                            className={`inline-flex items-center justify-center min-w-[24px] h-[22px] sm:h-[24px] px-1.5 rounded-[6px] font-mono text-[0.7rem] sm:text-[0.72rem] font-bold tracking-tight transition-[colors,transform] duration-150 select-none ${isActive
                               ? "bg-green/15 text-green border border-green scale-105"
                               : "bg-canvas dark:bg-surface-elevated text-text-primary border border-strong border-b-2 shadow-xs"
                               }`}

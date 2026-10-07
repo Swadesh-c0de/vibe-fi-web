@@ -95,7 +95,7 @@ export default function FeaturesGrid(): React.JSX.Element {
   ];
 
   return (
-    <section className="py-8 sm:py-12" id="features">
+    <section className="py-8 sm:py-12 content-auto" id="features">
       <div className="container">
         <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-1 sm:gap-4 border-b border-subtle pb-2.5 mb-5 sm:mb-6">
           <h2 className="font-brand text-base sm:text-lg font-bold text-text-primary tracking-tight">
@@ -111,7 +111,7 @@ export default function FeaturesGrid(): React.JSX.Element {
             <div
               key={feat.id}
               id={feat.id}
-              className="bg-surface border border-subtle rounded-[6px] p-3.5 sm:p-4.5 lg:p-5 flex flex-col justify-between transition-all duration-200 hover:border-strong hover:-translate-y-0.5 hover:shadow-sm"
+              className="bg-surface border border-subtle rounded-[6px] p-3.5 sm:p-4.5 lg:p-5 flex flex-col justify-between transition-[border-color,transform,box-shadow] duration-150 hover:border-strong hover:-translate-y-0.5 hover:shadow-sm"
             >
               <div>
                 <div className="flex items-center justify-between mb-3 sm:mb-4">

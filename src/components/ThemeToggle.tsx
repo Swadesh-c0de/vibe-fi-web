@@ -38,19 +38,41 @@ export default function ThemeToggle(): React.JSX.Element {
 
   const toggleTheme = (): void => {
     const nextTheme: Theme = theme === "dark" ? "light" : "dark";
+
+    // Instant Zero-Jank Theme Switch:
+    // 1. Temporarily freeze all CSS transitions across the entire DOM tree
+    document.documentElement.classList.add("disable-transitions");
+
+    // 2. Set theme attribute and persist to storage
     document.documentElement.setAttribute("data-theme", nextTheme);
     try {
       localStorage.setItem("vibefi_theme", nextTheme);
     } catch {
       // Safe fallback for restricted storage environments
     }
+
+    // 3. Update theme-color meta tag for browser chrome
+    const themeMeta = document.querySelector('meta[name="theme-color"]');
+    if (themeMeta) {
+      themeMeta.setAttribute("content", nextTheme === "light" ? "#fbf1c7" : "#141617");
+    }
+
+    // 4. Force synchronous style recalculation while transitions are frozen
+    window.getComputedStyle(document.documentElement).opacity;
+
+    // 5. Restore normal transitions on the next frame
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        document.documentElement.classList.remove("disable-transitions");
+      });
+    });
   };
 
   return (
     <button
       type="button"
       onClick={toggleTheme}
-      className="theme-toggle-btn h-[34px] shrink-0 inline-flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 bg-surface-elevated border border-strong rounded-[6px] text-text-primary font-mono text-[0.85rem] font-semibold transition-all hover:border-sage hover:text-sage hover:-translate-y-0.5 active:scale-95 select-none cursor-pointer box-border whitespace-nowrap"
+      className="theme-toggle-btn h-[34px] shrink-0 inline-flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 bg-surface-elevated border border-strong rounded-[6px] text-text-primary font-mono text-[0.85rem] font-semibold transition-colors duration-150 hover:border-sage hover:text-sage hover:-translate-y-0.5 active:scale-95 select-none cursor-pointer box-border whitespace-nowrap"
       aria-label={`Switch to ${theme === "dark" ? "light" : "dark"} mode`}
       title={`Switch to ${theme === "dark" ? "light" : "dark"} mode`}
     >

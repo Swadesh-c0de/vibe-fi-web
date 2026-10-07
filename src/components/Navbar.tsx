@@ -40,7 +40,7 @@ export default function Navbar(): React.JSX.Element {
   }, []);
 
   return (
-    <header className="sticky top-0 z-[100] bg-overlay backdrop-blur-md border-b border-subtle transition-all">
+    <header className="sticky top-0 z-[100] bg-overlay backdrop-blur-md border-b border-subtle transition-colors gpu-layer">
       <div className="container flex items-center justify-between h-[60px] sm:h-[68px]">
         {/* Brand Logo */}
         <Link href="/" className="flex items-center gap-2.5 sm:gap-3 shrink-0" aria-label="vibe-fi home">
@@ -85,7 +85,7 @@ export default function Navbar(): React.JSX.Element {
             href="https://github.com/Swadesh-c0de/vibe-fi"
             target="_blank"
             rel="noopener noreferrer"
-            className="h-[34px] shrink-0 inline-flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 bg-surface-elevated border border-strong rounded-[6px] font-sans text-[0.82rem] sm:text-[0.85rem] font-semibold text-text-primary transition-all hover:border-gold hover:text-gold hover:-translate-y-0.5 box-border select-none whitespace-nowrap"
+            className="h-[34px] shrink-0 inline-flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 bg-surface-elevated border border-strong rounded-[6px] font-sans text-[0.82rem] sm:text-[0.85rem] font-semibold text-text-primary transition-colors duration-150 hover:border-gold hover:text-gold hover:-translate-y-0.5 box-border select-none whitespace-nowrap"
             title="Star vibe-fi on GitHub"
           >
             <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" className="shrink-0">

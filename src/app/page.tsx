@@ -118,7 +118,7 @@ export default function HomePage(): React.JSX.Element {
         </section>
 
         {/* ─── QUICK INSTALL WIDGET ───────────────────────────────── */}
-        <section className="py-8 sm:py-12" id="install">
+        <section className="py-8 sm:py-12 content-auto" id="install">
           <div className="container">
             <div className="max-w-[700px] mx-auto mb-2.5 sm:mb-3 flex flex-col sm:flex-row sm:items-baseline justify-between gap-1 px-1">
               <h2 className="font-brand text-base sm:text-lg font-bold text-text-primary tracking-tight">

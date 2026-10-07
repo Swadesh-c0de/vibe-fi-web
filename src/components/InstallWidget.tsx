@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import React, { useEffect, useState } from "react";
+import React, { useState, useSyncExternalStore } from "react";
 
 export interface InstallOption {
   id: string;
@@ -42,21 +42,18 @@ const INSTALL_OPTIONS: InstallOption[] = [
   },
 ];
 
+const noopSubscribe = () => () => {};
+
 export default function InstallWidget(): React.JSX.Element {
-  const [activeTab, setActiveTab] = useState<string>("auto");
+  const isMac = useSyncExternalStore(
+    noopSubscribe,
+    () => typeof window !== "undefined" && window.navigator.userAgent.toLowerCase().includes("mac"),
+    () => false
+  );
+  const [selectedTab, setSelectedTab] = useState<string | null>(null);
   const [copied, setCopied] = useState<boolean>(false);
 
-  useEffect(() => {
-    // Auto-detect OS
-    if (typeof window !== "undefined") {
-      const userAgent = window.navigator.userAgent.toLowerCase();
-      if (userAgent.includes("mac")) {
-        const timer = setTimeout(() => setActiveTab("macos"), 0);
-        return () => clearTimeout(timer);
-      }
-    }
-  }, []);
-
+  const activeTab = selectedTab ?? (isMac ? "macos" : "auto");
   const currentOption = INSTALL_OPTIONS.find((opt) => opt.id === activeTab) || INSTALL_OPTIONS[0];
 
   const handleCopy = (e?: React.MouseEvent): void => {
@@ -95,7 +92,7 @@ export default function InstallWidget(): React.JSX.Element {
   };
 
   return (
-    <div className="bg-surface border border-subtle sm:border-strong rounded-[6px] shadow-xs hover:border-strong transition-all duration-200 overflow-hidden">
+    <div className="bg-surface border border-subtle sm:border-strong rounded-[6px] shadow-xs hover:border-strong transition-[border-color,box-shadow] duration-150 overflow-hidden">
       {/* Sleek Tab Navigation */}
       <div
         className="flex items-center gap-1 p-1 sm:p-1.5 border-b border-subtle bg-surface-elevated/30 overflow-x-auto scrollbar-none [webkit-overflow-scrolling:touch]"
@@ -110,10 +107,10 @@ export default function InstallWidget(): React.JSX.Element {
               role="tab"
               aria-selected={isActive}
               onClick={() => {
-                setActiveTab(opt.id);
+                setSelectedTab(opt.id);
                 setCopied(false);
               }}
-              className={`install-tab-btn flex items-center gap-1.5 px-2.5 sm:px-3 py-1 sm:py-1.2 rounded-[6px] font-brand text-[0.76rem] sm:text-[0.82rem] font-semibold whitespace-nowrap shrink-0 transition-all cursor-pointer ${
+              className={`install-tab-btn flex items-center gap-1.5 px-2.5 sm:px-3 py-1 sm:py-1.2 rounded-[6px] font-brand text-[0.76rem] sm:text-[0.82rem] font-semibold whitespace-nowrap shrink-0 transition-colors cursor-pointer ${
                 isActive
                   ? "bg-surface text-text-primary border border-strong shadow-xs font-bold"
                   : "text-text-secondary hover:text-text-primary hover:bg-surface-subtle border border-transparent"
@@ -154,7 +151,7 @@ export default function InstallWidget(): React.JSX.Element {
         <button
           type="button"
           onClick={handleCopy}
-          className={`terminal-copy-action-btn h-[30px] sm:h-[32px] inline-flex items-center gap-1.5 px-2.5 rounded-[6px] border font-mono text-[0.72rem] sm:text-[0.76rem] font-semibold shrink-0 cursor-pointer transition-all duration-150 active:scale-95 shadow-xs select-none ${
+          className={`terminal-copy-action-btn h-[30px] sm:h-[32px] inline-flex items-center gap-1.5 px-2.5 rounded-[6px] border font-mono text-[0.72rem] sm:text-[0.76rem] font-semibold shrink-0 cursor-pointer transition-colors duration-150 active:scale-95 shadow-xs select-none ${
             copied
               ? "bg-green text-text-inverse border-green font-bold shadow-sm"
               : "bg-surface-elevated hover:bg-surface border-strong hover:border-sage text-text-primary hover:text-sage"

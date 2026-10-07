@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 
 export interface WorkflowCategory {
   id: string;
@@ -108,18 +108,22 @@ export default function CliWorkflows(): React.JSX.Element {
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState<string>("");
 
-  const filteredCommands = COMMANDS.filter((cmd) => {
-    const matchesCategory = activeCategory === "all" || cmd.category === activeCategory;
-    const matchesSearch =
-      searchQuery === "" ||
-      cmd.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      cmd.desc.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      cmd.command.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      (cmd.altCommand && cmd.altCommand.toLowerCase().includes(searchQuery.toLowerCase())) ||
-      (cmd.keywords && cmd.keywords.some((k) => k.toLowerCase().includes(searchQuery.toLowerCase()))) ||
-      cmd.tag.toLowerCase().includes(searchQuery.toLowerCase());
-    return matchesCategory && matchesSearch;
-  });
+  const filteredCommands = useMemo(() => {
+    const q = searchQuery.trim().toLowerCase();
+    return COMMANDS.filter((cmd) => {
+      const matchesCategory = activeCategory === "all" || cmd.category === activeCategory;
+      if (!matchesCategory) return false;
+      if (!q) return true;
+      return (
+        cmd.title.toLowerCase().includes(q) ||
+        cmd.desc.toLowerCase().includes(q) ||
+        cmd.command.toLowerCase().includes(q) ||
+        (cmd.altCommand && cmd.altCommand.toLowerCase().includes(q)) ||
+        (cmd.keywords && cmd.keywords.some((k) => k.toLowerCase().includes(q))) ||
+        cmd.tag.toLowerCase().includes(q)
+      );
+    });
+  }, [activeCategory, searchQuery]);
 
   const handleCopy = (id: string, text: string): void => {
     const fallbackCopy = (): void => {
@@ -156,7 +160,7 @@ export default function CliWorkflows(): React.JSX.Element {
   };
 
   return (
-    <section className="py-8 sm:py-12 relative" id="cli">
+    <section className="py-8 sm:py-12 relative content-auto" id="cli">
       <div className="container">
         {/* Clean, Compact Section Header */}
         <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-1 sm:gap-4 border-b border-subtle pb-2.5 mb-4 sm:mb-6">
@@ -176,7 +180,7 @@ export default function CliWorkflows(): React.JSX.Element {
                 type="button"
                 key={cat.id}
                 onClick={() => setActiveCategory(cat.id)}
-                className={`cli-cat-btn px-2.5 sm:px-3 py-1 sm:py-1.2 rounded-[6px] font-brand text-[0.76rem] sm:text-[0.82rem] font-semibold whitespace-nowrap shrink-0 transition-all cursor-pointer ${
+                className={`cli-cat-btn px-2.5 sm:px-3 py-1 sm:py-1.2 rounded-[6px] font-brand text-[0.76rem] sm:text-[0.82rem] font-semibold whitespace-nowrap shrink-0 transition-colors cursor-pointer ${
                   activeCategory === cat.id
                     ? "active bg-surface-elevated text-sage border border-strong shadow-xs font-bold"
                     : "text-text-secondary hover:text-text-primary hover:bg-surface-subtle border border-transparent"
@@ -229,7 +233,7 @@ export default function CliWorkflows(): React.JSX.Element {
             return (
               <div
                 key={cmd.id}
-                className="bg-surface border border-subtle rounded-[6px] p-3.5 sm:p-4.5 lg:p-5 flex flex-col justify-between gap-4 transition-all duration-200 min-w-0 max-w-full hover:border-strong hover:-translate-y-0.5 hover:shadow-sm"
+                className="bg-surface border border-subtle rounded-[6px] p-3.5 sm:p-4.5 lg:p-5 flex flex-col justify-between gap-4 transition-[border-color,transform,box-shadow] duration-150 min-w-0 max-w-full hover:border-strong hover:-translate-y-0.5 hover:shadow-sm"
               >
                 <div>
                   <div className="flex items-center justify-between mb-2 sm:mb-2.5">
@@ -239,7 +243,7 @@ export default function CliWorkflows(): React.JSX.Element {
                     <button
                       type="button"
                       onClick={() => handleCopy(cmd.id, cmd.command)}
-                      className={`inline-flex items-center gap-1 px-2 py-0.5 font-mono text-[0.7rem] sm:text-[0.72rem] font-bold rounded-[6px] bg-surface-elevated border border-subtle transition-all cursor-pointer ${
+                      className={`inline-flex items-center gap-1 px-2 py-0.5 font-mono text-[0.7rem] sm:text-[0.72rem] font-bold rounded-[6px] bg-surface-elevated border border-subtle transition-colors cursor-pointer ${
                         isCopied
                           ? "bg-green text-text-inverse border-green"
                           : "text-text-secondary hover:text-text-primary hover:border-sage"

@@ -2,7 +2,7 @@ import React from "react";
 
 export default function CommunitySection(): React.JSX.Element {
   return (
-    <section className="py-8 sm:py-12" id="community">
+    <section className="py-8 sm:py-12 content-auto" id="community">
       <div className="container max-w-[760px]">
         <div className="relative overflow-hidden bg-surface border border-subtle rounded-[6px] py-7 px-4.5 sm:py-9 sm:px-8 text-center shadow-xs">
           <div className="relative z-10 max-w-[540px] mx-auto">

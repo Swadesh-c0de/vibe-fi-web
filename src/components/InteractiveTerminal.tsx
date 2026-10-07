@@ -44,9 +44,28 @@ interface PaletteColors {
 export default function InteractiveTerminal(): React.JSX.Element {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const containerRef = useRef<HTMLDivElement | null>(null);
+  const peakTextRef = useRef<HTMLSpanElement | null>(null);
   const audioCtxRef = useRef<AudioContext | null>(null);
   const analyserRef = useRef<AnalyserNode | null>(null);
   const synthIntervalRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Cached dimensions & frequency buffer to avoid allocations & layout thrashing in render loop
+  const canvasDimensionsRef = useRef<{ width: number; height: number; dpr: number }>({
+    width: 600,
+    height: 130,
+    dpr: 1,
+  });
+  const freqDataRef = useRef<Uint8Array<ArrayBuffer> | null>(null);
+  const isVisibleRef = useRef<boolean>(true);
+  const lastIdleMsRef = useRef<number>(0);
+
+  // Cached palette to eliminate getComputedStyle calls from 60fps render loop
+  const paletteRef = useRef<PaletteColors>({
+    base: "#a9b665",
+    top: "#ea6962",
+    cap: "#e78a4e",
+    accent: "#7daea3",
+  });
 
   // Peak physics for authentic DSP equalizer
   const peaksRef = useRef<number[]>([]);
@@ -58,39 +77,102 @@ export default function InteractiveTerminal(): React.JSX.Element {
   const [currentSecond, setCurrentSecond] = useState<number>(0);
   const [volume] = useState<number>(85);
   const [isMuted, setIsMuted] = useState<boolean>(false);
-  const [peakLevel, setPeakLevel] = useState<number>(78);
   const [termWidth, setTermWidth] = useState<number>(600);
 
   const TOTAL_DURATION = 40; // 40 seconds loop
 
-  // Track terminal window width for responsive sub-components
+  // Palette Cache Synchronizer (runs on theme change, not in 60fps loop)
+  const updatePalette = useCallback((): void => {
+    if (!containerRef.current) return;
+    const cs = window.getComputedStyle(containerRef.current);
+    paletteRef.current = {
+      base: cs.getPropertyValue("--term-bar-base").trim() || "#a9b665",
+      top: cs.getPropertyValue("--term-bar-top").trim() || "#ea6962",
+      cap: cs.getPropertyValue("--term-bar-cap").trim() || "#e78a4e",
+      accent: cs.getPropertyValue("--term-accent").trim() || "#7daea3",
+    };
+  }, []);
+
+  useEffect(() => {
+    updatePalette();
+    const mo = new MutationObserver(() => updatePalette());
+    mo.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ["data-theme"],
+    });
+    return () => mo.disconnect();
+  }, [activeTheme, updatePalette]);
+
+  // Track terminal window width & canvas dimensions with debounced resize observer
   useEffect(() => {
     if (!containerRef.current) return;
-    const updateWidth = (): void => {
+
+    const updateMeasurements = (): void => {
       if (containerRef.current) {
-        setTermWidth(containerRef.current.clientWidth);
+        const w = containerRef.current.clientWidth;
+        setTermWidth((prev) => {
+          const prevBucket = prev < 380 ? 1 : prev < 500 ? 2 : 3;
+          const newBucket = w < 380 ? 1 : w < 500 ? 2 : 3;
+          return prevBucket !== newBucket ? w : prev;
+        });
+      }
+
+      if (canvasRef.current) {
+        const rect = canvasRef.current.getBoundingClientRect();
+        const dpr = window.devicePixelRatio || 1;
+        canvasDimensionsRef.current = {
+          width: rect.width,
+          height: rect.height,
+          dpr,
+        };
+
+        if (
+          canvasRef.current.width !== Math.round(rect.width * dpr) ||
+          canvasRef.current.height !== Math.round(rect.height * dpr)
+        ) {
+          canvasRef.current.width = Math.round(rect.width * dpr);
+          canvasRef.current.height = Math.round(rect.height * dpr);
+        }
       }
     };
-    updateWidth();
-    const ro = new ResizeObserver((entries) => {
-      for (const entry of entries) {
-        setTermWidth(entry.contentRect.width);
-      }
-    });
+
+    updateMeasurements();
+    const ro = new ResizeObserver(updateMeasurements);
     ro.observe(containerRef.current);
+    if (canvasRef.current) ro.observe(canvasRef.current);
+
     return () => ro.disconnect();
+  }, []);
+
+  // Viewport intersection observer: sleep canvas requestAnimationFrame loop when scrolled out of view
+  useEffect(() => {
+    if (!containerRef.current) return;
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        isVisibleRef.current = entry.isIntersecting;
+      },
+      { threshold: 0.05 }
+    );
+    io.observe(containerRef.current);
+    return () => io.disconnect();
   }, []);
 
   // Initialize Web Audio Synth for interactive audio
   const startAudio = useCallback((): void => {
     try {
-      const AudioCtx = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
+      const AudioCtx =
+        window.AudioContext ||
+        (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
+
       if (!audioCtxRef.current) {
         audioCtxRef.current = new AudioCtx();
         const analyser = audioCtxRef.current.createAnalyser();
         analyser.fftSize = 128;
         analyser.smoothingTimeConstant = 0.75;
+        // Connect analyser to master destination ONCE
+        analyser.connect(audioCtxRef.current.destination);
         analyserRef.current = analyser;
+        freqDataRef.current = new Uint8Array(new ArrayBuffer(analyser.frequencyBinCount)) as Uint8Array<ArrayBuffer>;
       }
 
       if (audioCtxRef.current.state === "suspended") {
@@ -131,7 +213,6 @@ export default function InteractiveTerminal(): React.JSX.Element {
           osc.connect(filter);
           filter.connect(gain);
           gain.connect(analyserRef.current);
-          analyserRef.current.connect(audioCtxRef.current.destination);
 
           osc.start(now);
           osc.stop(now + 2.9);
@@ -222,7 +303,7 @@ export default function InteractiveTerminal(): React.JSX.Element {
     return acc;
   }, 0);
 
-  // Canvas visualizer rendering loop
+  // Canvas visualizer rendering loop with zero DOM thrashing & direct ref peak updates
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -233,26 +314,38 @@ export default function InteractiveTerminal(): React.JSX.Element {
     let localPeakHold = 78;
 
     const render = (): void => {
-      const rect = canvas.getBoundingClientRect();
-      const dpr = window.devicePixelRatio || 1;
-      const width = rect.width;
-      const height = rect.height;
+      // 1. Sleep loop if scrolled offscreen
+      if (!isVisibleRef.current) {
+        animId = requestAnimationFrame(render);
+        return;
+      }
 
-      if (canvas.width !== width * dpr || canvas.height !== height * dpr) {
-        canvas.width = width * dpr;
-        canvas.height = height * dpr;
+      // 2. Throttle idle loop when paused to save battery & CPU
+      const nowMs = performance.now();
+      if (!isPlaying) {
+        if (nowMs - lastIdleMsRef.current < 45) {
+          animId = requestAnimationFrame(render);
+          return;
+        }
+        lastIdleMsRef.current = nowMs;
+      }
+
+      // 3. Use cached dimensions (zero getBoundingClientRect reflows)
+      const { width, height, dpr } = canvasDimensionsRef.current;
+      if (width <= 0 || height <= 0) {
+        animId = requestAnimationFrame(render);
+        return;
       }
 
       ctx.save();
       ctx.scale(dpr, dpr);
       ctx.clearRect(0, 0, width, height);
 
-      let dataArray: Uint8Array<ArrayBuffer> | null = null;
-      if (analyserRef.current && isPlaying) {
-        const bufferLength = analyserRef.current.frequencyBinCount;
-        dataArray = new Uint8Array(new ArrayBuffer(bufferLength)) as Uint8Array<ArrayBuffer>;
-        analyserRef.current.getByteFrequencyData(dataArray);
+      // Re-use preallocated typed array buffer
+      if (analyserRef.current && isPlaying && freqDataRef.current) {
+        analyserRef.current.getByteFrequencyData(freqDataRef.current);
       }
+      const dataArray = isPlaying ? freqDataRef.current : null;
 
       const isSmall = width < 400;
       const isMedium = width < 600;
@@ -265,14 +358,8 @@ export default function InteractiveTerminal(): React.JSX.Element {
         peakDecayRef.current = new Array(numBars).fill(0);
       }
 
-      const containerStyle = containerRef.current ? getComputedStyle(containerRef.current) : null;
-      const palette: PaletteColors = {
-        base: containerStyle?.getPropertyValue("--term-bar-base").trim() || "#a9b665",
-        top: containerStyle?.getPropertyValue("--term-bar-top").trim() || "#ea6962",
-        cap: containerStyle?.getPropertyValue("--term-bar-cap").trim() || "#e78a4e",
-        accent: containerStyle?.getPropertyValue("--term-accent").trim() || "#7daea3",
-      };
-
+      // Use cached palette (zero getComputedStyle recalcs)
+      const palette = paletteRef.current;
       const now = Date.now() / 1000;
       let frameMax = 0;
 
@@ -280,7 +367,10 @@ export default function InteractiveTerminal(): React.JSX.Element {
         let normalizedHeight = 0;
 
         if (isPlaying && dataArray) {
-          const bin = Math.min(dataArray.length - 1, Math.floor((i / numBars) * (dataArray.length * 0.75)));
+          const bin = Math.min(
+            dataArray.length - 1,
+            Math.floor((i / numBars) * (dataArray.length * 0.75))
+          );
           normalizedHeight = dataArray[bin] / 255;
         } else if (isPlaying) {
           const wave1 = Math.sin(now * 4 + i * 0.28) * 0.45;
@@ -339,10 +429,11 @@ export default function InteractiveTerminal(): React.JSX.Element {
         }
       }
 
-      if (isPlaying) {
+      // 4. Update peak meter via direct DOM ref (ZERO React re-renders in 60fps loop)
+      if (isPlaying && peakTextRef.current) {
         const currentPeakPercent = Math.min(99, Math.round((frameMax / height) * 100));
         localPeakHold = Math.round(localPeakHold * 0.95 + currentPeakPercent * 0.05);
-        setPeakLevel(localPeakHold);
+        peakTextRef.current.textContent = `[${localPeakHold}% PEAK]`;
       }
 
       ctx.restore();
@@ -454,7 +545,7 @@ export default function InteractiveTerminal(): React.JSX.Element {
               {visMode === "flame" ? "NEON FLAME" : visMode === "cava" ? "CAVA WAVE" : "STEREO BARS"}
               <span className="tui-note-symbols hidden md:inline ml-2">[♫ {isPlaying ? "● ● ○ ○" : "○ ○ ○ ○"}]</span>
             </span>
-            <span className="tui-pane-peak shrink-0">[{peakLevel}% PEAK]</span>
+            <span ref={peakTextRef} className="tui-pane-peak shrink-0">[78% PEAK]</span>
           </div>
 
           <div className="tui-canvas-wrapper">
