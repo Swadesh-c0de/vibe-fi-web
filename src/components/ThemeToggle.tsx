@@ -72,7 +72,7 @@ export default function ThemeToggle(): React.JSX.Element {
     <button
       type="button"
       onClick={toggleTheme}
-      className="theme-toggle-btn h-[34px] shrink-0 inline-flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 bg-surface-elevated border border-strong rounded-[6px] text-text-primary font-mono text-[0.85rem] font-semibold transition-colors duration-150 hover:border-sage hover:text-sage hover:-translate-y-0.5 active:scale-95 select-none cursor-pointer box-border whitespace-nowrap"
+      className="theme-toggle-btn w-[34px] h-[34px] shrink-0 inline-flex items-center justify-center bg-surface-elevated border border-strong rounded-[6px] text-text-primary transition-colors duration-150 hover:bg-surface-subtle hover:border-sage hover:text-sage select-none cursor-pointer box-border"
       aria-label={`Switch to ${theme === "dark" ? "light" : "dark"} mode`}
       title={`Switch to ${theme === "dark" ? "light" : "dark"} mode`}
     >
@@ -94,9 +94,6 @@ export default function ThemeToggle(): React.JSX.Element {
             <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z" />
           </svg>
         )}
-      </span>
-      <span className="theme-toggle-label leading-none hidden sm:inline">
-        {theme === "dark" ? "Dark" : "Light"}
       </span>
     </button>
   );

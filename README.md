@@ -1,6 +1,6 @@
 # Vibe-Fi Official Website
 
-> The modern, high-performance product landing page and documentation portal for [Vibe-Fi](https://github.com/Swadesh-c0de/vibe-fi) — the lightning-fast, zero-config terminal music player for Linux & macOS.
+> The modern, high-performance product landing page and documentation portal for [Vibe-Fi (Go Edition)](https://github.com/Swadesh-c0de/vibe-fi-go) — the lightning-fast, zero-config terminal music player for Linux & macOS built in Go with Charm's Bubble Tea.
 
 ---
 
@@ -8,16 +8,14 @@
 
 - **Gruvbox Material Aesthetic**: Styled after retro-modern minimalist terminal aesthetics with custom colors matching the official Vibe-Fi brand squircle and Arch Linux powerline prompts.
 - **☀️ Light & 🌙 Dark Mode Switcher**: Persistent, zero-flicker theme toggle button.
-- **Interactive Live Terminal Player**:
-  - Procedural Web Audio synthesizer engine (warm Lo-Fi chords)
-  - 60 FPS Canvas Audio Visualizer with 3 reactive modes: **Cava Wave**, **Neon Flame** (with floating peak caps), and **Stereo Bars**
-  - Real-time Synchronized Lyrics scroller (simulating `lrclib.net` integration)
-  - Terminal theme switcher (**Midnight**, **Matrix**, **Nord**, **HyDE**)
-  - Keyboard shortcuts active in-browser (`Space` to play/pause, `V` for visualizer, `T` for theme, `M` for mute)
+- **Terminal Player Showcase (Go Edition)**:
+  - High-definition video demo and showcase player view
+  - Demonstrates real-time audio visualizers, synchronized lyrics, and YouTube streaming
+  - Gruvbox Material terminal chrome with zero-distraction layout
 - **Multi-Route Documentation Portal**:
-  - `/docs`: Getting started overview & architecture
-  - `/docs/installation`: Multi-platform guide (Arch Linux, macOS, Ubuntu/Debian, Fedora, CMake source build)
-  - `/docs/usage`: CLI usage, YouTube streaming, playlists, lyrics cache, Waybar & Hyprland setup
+  - `/docs`: Getting started overview & Go/Bubble Tea architecture
+  - `/docs/installation`: Multi-platform guide (Arch Linux, macOS, Ubuntu/Debian, Fedora, Go & Make source build)
+  - `/docs/usage`: CLI flags (`--no-update`, `--bottle`), YouTube streaming, playlists, lyrics cache, Waybar & Hyprland setup
   - `/docs/hotkeys`: Searchable shortcut cheatsheet
 - **100% Vibe-Fi Focused**: Highlights the 6 core pillars without competitor comparisons.
 - **Static Export Ready**: Fully compatible with Vercel, Netlify, Cloudflare Pages, and GitHub Pages.

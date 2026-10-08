@@ -29,131 +29,152 @@ const SHORTCUT_GROUPS: CategoryGroup[] = [
       {
         id: "play-pause",
         keys: ["Space"],
-        label: "Toggle Play / Pause",
-        hint: "Instant pause / resume",
+        label: "Play / Pause",
+        hint: "Start or pause playback",
         triggerKeys: [" ", "Space"],
+      },
+      {
+        id: "next-prev",
+        keys: ["N", "B"],
+        label: "Next / Previous Song",
+        hint: "Skip tracks forward or back",
+        triggerKeys: ["n", "N", "b", "B", ">", "<"],
       },
       {
         id: "seek",
         keys: ["←", "→"],
-        label: "Seek Backward / Forward",
-        hint: "±5 seconds",
+        label: "Rewind / Fast-Forward",
+        hint: "Jump 5 seconds back or ahead",
         triggerKeys: ["ArrowLeft", "ArrowRight"],
       },
       {
         id: "volume",
         keys: ["+", "-"],
         label: "Volume Up / Down",
-        hint: "5% gain steps",
+        hint: "Adjust volume in 5% steps",
         triggerKeys: ["+", "-", "=", "_"],
       },
       {
-        id: "mute",
-        keys: ["M"],
-        label: "Mute / Unmute",
-        hint: "Silences audio output",
-        triggerKeys: ["m", "M"],
+        id: "autoplay",
+        keys: ["O"],
+        label: "Toggle Autoplay",
+        hint: "Keep playing related songs",
+        triggerKeys: ["o", "O"],
       },
     ],
   },
   {
     id: "navigation",
-    title: "Navigation & Search",
+    title: "Search & Navigation",
     accent: "var(--accent-gold)",
     borderGlow: "rgba(216, 166, 87, 0.3)",
     items: [
       {
         id: "search",
         keys: ["S"],
-        label: "Live YouTube Search",
-        hint: "Inline search prompt",
+        label: "Search YouTube",
+        hint: "Search for songs or artists",
         triggerKeys: ["s", "S"],
       },
       {
         id: "url",
         keys: ["U"],
-        label: "Stream Direct URL",
-        hint: "Paste from clipboard",
+        label: "Play Direct Link",
+        hint: "Paste a YouTube link from clipboard",
         triggerKeys: ["u", "U"],
       },
       {
-        id: "restore",
-        keys: ["R"],
-        label: "Restore Last Session",
-        hint: "Loads ~/.vibe-fi/state.ini",
-        triggerKeys: ["r", "R"],
+        id: "queue",
+        keys: ["C"],
+        label: "View Song Queue",
+        hint: "See upcoming tracks",
+        triggerKeys: ["c", "C"],
+      },
+      {
+        id: "cheatsheet",
+        keys: ["?", "F1"],
+        label: "Help & Shortcuts",
+        hint: "Open shortcuts cheat sheet",
+        triggerKeys: ["?", "F1", "/"],
       },
       {
         id: "quit",
         keys: ["Q"],
-        label: "Quit Player Safely",
-        hint: "Cleans up terminal screen",
+        label: "Quit Vibe-Fi",
+        hint: "Exit player and restore terminal",
         triggerKeys: ["q", "Q"],
       },
     ],
   },
   {
     id: "visuals",
-    title: "Visualizers & Themes",
+    title: "Visualizers & Lyrics",
     accent: "var(--accent-amber)",
     borderGlow: "rgba(231, 138, 78, 0.3)",
     items: [
       {
-        id: "visualizer",
+        id: "layout",
         keys: ["V"],
-        label: "Cycle Visualizers",
-        hint: "Flame, Cava, Stereo",
+        label: "Switch View Layout",
+        hint: "Split view ↔ Full visualizer ↔ Full lyrics",
         triggerKeys: ["v", "V"],
       },
       {
         id: "theme",
         keys: ["T"],
-        label: "Cycle Color Themes",
-        hint: "Gruvbox, Midnight, Nord...",
+        label: "Change Color Theme",
+        hint: "Cycle Midnight, Nord, Matrix, Gruvbox...",
         triggerKeys: ["t", "T"],
       },
       {
-        id: "lyrics",
+        id: "lyrics-scroll",
         keys: ["↑", "↓"],
-        label: "Scroll Synced Lyrics",
-        hint: "Manual LRC navigation",
+        label: "Scroll Lyrics",
+        hint: "Browse lyrics up and down",
         triggerKeys: ["ArrowUp", "ArrowDown"],
+      },
+      {
+        id: "lyrics-auto",
+        keys: ["Y"],
+        label: "Auto-Scroll Lock",
+        hint: "Turn automatic lyric scrolling back on",
+        triggerKeys: ["y", "Y"],
       },
     ],
   },
   {
     id: "library",
-    title: "Library & Playlists",
+    title: "Local Music & Playlists",
     accent: "var(--accent-purple)",
     borderGlow: "rgba(211, 134, 155, 0.3)",
     items: [
       {
-        id: "library",
+        id: "local-lib",
         keys: ["L"],
         label: "Browse Local Music",
-        hint: "FLAC, MP3, WAV, OPUS",
+        hint: "Play MP3, FLAC, WAV, and more",
         triggerKeys: ["l", "L"],
       },
       {
         id: "playlist",
         keys: ["P"],
-        label: "Playlist Manager",
-        hint: "Switch & reorder queues",
+        label: "Playlists Manager",
+        hint: "Open and organize saved playlists",
         triggerKeys: ["p", "P"],
       },
       {
         id: "add",
         keys: ["A"],
-        label: "Add Track to Playlist",
-        hint: "Quick append active song",
+        label: "Add to Playlist",
+        hint: "Save playing song to a playlist",
         triggerKeys: ["a", "A"],
       },
       {
-        id: "export",
-        keys: ["E"],
-        label: "Export Playlist (.m3u)",
-        hint: "Save standard format to disk",
-        triggerKeys: ["e", "E"],
+        id: "esc",
+        keys: ["ESC"],
+        label: "Back / Close Menu",
+        hint: "Return to main player screen",
+        triggerKeys: ["Escape"],
       },
     ],
   },
@@ -222,21 +243,21 @@ export default function HotkeysSection(): React.JSX.Element {
   );
 
   return (
-    <section className="py-8 sm:py-12 content-auto" id="hotkeys">
-      <div className="container max-w-[1020px]">
+    <section className="py-14 sm:py-20 lg:py-24 content-auto" id="hotkeys">
+      <div className="container max-w-[1040px]">
         {/* Clean, Compact Section Header */}
-        <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-1 sm:gap-4 border-b border-subtle pb-2.5 mb-4 sm:mb-6">
-          <h2 className="font-brand text-base sm:text-lg font-bold text-text-primary tracking-tight">
+        <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-1.5 sm:gap-4 border-b border-subtle pb-3.5 mb-6 sm:mb-8">
+          <h2 className="font-brand text-2xl sm:text-3xl font-extrabold text-text-primary tracking-tight">
             Keyboard Shortcuts
           </h2>
-          <span className="text-[0.72rem] sm:text-xs font-mono text-text-muted">
+          <span className="text-xs sm:text-sm font-mono text-text-muted">
             Home-row navigation · Zero mouse required
           </span>
         </div>
 
         {/* Category Tabs Scrolling Inside the Card */}
-        <div className="flex justify-center mb-4 sm:mb-5 max-w-full px-2">
-          <div className="inline-flex items-center gap-1 p-1 bg-surface border border-subtle rounded-[6px] max-w-full overflow-x-auto scrollbar-none shadow-xs">
+        <div className="flex justify-center mb-6 sm:mb-8 max-w-full px-2">
+          <div className="inline-flex items-center gap-1.5 p-1.5 bg-surface border border-subtle rounded-[6px] max-w-full overflow-x-auto scrollbar-none shadow-xs">
             {FILTER_TABS.map((tab) => {
               const isActive = activeTab === tab.id;
               return (
@@ -251,7 +272,7 @@ export default function HotkeysSection(): React.JSX.Element {
                       inline: "center",
                     });
                   }}
-                  className={`px-2.5 sm:px-3 py-1 rounded-[6px] text-[0.72rem] sm:text-xs font-mono font-medium transition-colors duration-150 whitespace-nowrap shrink-0 cursor-pointer ${isActive
+                  className={`px-3.5 sm:px-4 py-1.5 sm:py-2 rounded-[6px] text-[0.78rem] sm:text-[0.84rem] font-mono font-medium transition-colors duration-150 whitespace-nowrap shrink-0 cursor-pointer ${isActive
                     ? "bg-surface-elevated text-text-primary border border-strong shadow-xs font-semibold"
                     : "text-text-muted hover:text-text-primary hover:bg-surface-subtle border border-transparent"
                     }`}
@@ -265,23 +286,23 @@ export default function HotkeysSection(): React.JSX.Element {
 
         {/* 2x2 Clean Grouped Deck */}
         <div
-          className={`grid gap-3 sm:gap-4 md:gap-4.5 ${activeTab === "all"
+          className={`grid gap-4 sm:gap-6 ${activeTab === "all"
             ? "grid-cols-1 md:grid-cols-2"
-            : "grid-cols-1 max-w-[560px] mx-auto"
+            : "grid-cols-1 max-w-[620px] mx-auto"
             }`}
         >
           {visibleGroups.map((group) => (
             <div
               key={group.id}
-              className="bg-surface border border-subtle rounded-[6px] p-3 sm:p-4 md:p-4.5 transition-[border-color,box-shadow] duration-150 shadow-xs"
+              className="bg-surface border border-subtle rounded-[6px] p-5 sm:p-6 transition-[border-color,box-shadow] duration-150 shadow-xs"
             >
               {/* Category Header */}
-              <div className="flex items-center justify-between pb-2 mb-1.5 border-b border-subtle">
-                <h3 className="font-brand font-bold text-xs sm:text-[0.84rem] text-text-primary tracking-tight">
+              <div className="flex items-center justify-between pb-3 mb-2.5 border-b border-subtle">
+                <h3 className="font-brand font-bold text-sm sm:text-base text-text-primary tracking-tight">
                   {group.title}
                 </h3>
 
-                <span className="font-mono text-[0.66rem] sm:text-[0.68rem] text-text-muted">
+                <span className="font-mono text-[0.72rem] sm:text-[0.76rem] text-text-muted">
                   {group.items.length} keys
                 </span>
               </div>
@@ -298,7 +319,7 @@ export default function HotkeysSection(): React.JSX.Element {
                         setActiveShortcutId(item.id);
                         setTimeout(() => setActiveShortcutId(null), 1000);
                       }}
-                      className={`flex items-center justify-between py-1.5 sm:py-2 px-1.5 sm:px-2 -mx-1 rounded-[6px] transition-colors duration-150 cursor-pointer ${isActive
+                      className={`flex items-center justify-between py-2 sm:py-2.5 px-2 sm:px-2.5 -mx-1 rounded-[6px] transition-colors duration-150 cursor-pointer ${isActive
                         ? "bg-surface-elevated ring-1"
                         : "hover:bg-surface-elevated/50"
                         }`}
@@ -307,21 +328,21 @@ export default function HotkeysSection(): React.JSX.Element {
                       }}
                     >
                       {/* Left: Action Label & Micro-hint */}
-                      <div className="min-w-0 pr-2 sm:pr-2.5">
-                        <div className="font-sans text-[0.78rem] sm:text-[0.82rem] font-medium text-text-primary truncate">
+                      <div className="min-w-0 pr-2 sm:pr-3">
+                        <div className="font-sans text-[0.82rem] sm:text-[0.88rem] font-medium text-text-primary truncate">
                           {item.label}
                         </div>
-                        <div className="font-mono text-[0.66rem] sm:text-[0.68rem] text-text-muted truncate mt-0.5">
+                        <div className="font-mono text-[0.7rem] sm:text-[0.74rem] text-text-muted truncate mt-0.5">
                           {item.hint}
                         </div>
                       </div>
 
                       {/* Right: Tactile Keycap(s) */}
-                      <div className="flex items-center gap-1 shrink-0">
+                      <div className="flex items-center gap-1.5 shrink-0">
                         {item.keys.map((k, kIdx) => (
                           <kbd
                             key={kIdx}
-                            className={`inline-flex items-center justify-center min-w-[24px] h-[22px] sm:h-[24px] px-1.5 rounded-[6px] font-mono text-[0.7rem] sm:text-[0.72rem] font-bold tracking-tight transition-[colors,transform] duration-150 select-none ${isActive
+                            className={`inline-flex items-center justify-center min-w-[26px] h-[24px] sm:h-[26px] px-2 rounded-[6px] font-mono text-[0.72rem] sm:text-[0.76rem] font-bold tracking-tight transition-[colors,transform] duration-150 select-none ${isActive
                               ? "bg-green/15 text-green border border-green scale-105"
                               : "bg-canvas dark:bg-surface-elevated text-text-primary border border-strong border-b-2 shadow-xs"
                               }`}

@@ -20,35 +20,35 @@ export interface CliCommand {
 
 const WORKFLOW_CATEGORIES: WorkflowCategory[] = [
   { id: "all", label: "All Commands" },
-  { id: "stream", label: "Streaming" },
-  { id: "local", label: "Local Music" },
-  { id: "desktop", label: "Desktop & MPRIS" },
-  { id: "bottle", label: "Bottle & System" },
+  { id: "stream", label: "YouTube" },
+  { id: "local", label: "Local Files" },
+  { id: "desktop", label: "Media Keys" },
+  { id: "bottle", label: "Settings" },
 ];
 
 const COMMANDS: CliCommand[] = [
   {
     id: "search-stream",
     category: "stream",
-    tag: "Stream",
-    title: "Instant YouTube Audio Search",
-    desc: "Searches YouTube in the background, extracts the 160kbps audio stream via yt-dlp, and starts playing in milliseconds.",
+    tag: "Search",
+    title: "Search YouTube",
+    desc: "Search for any song, artist, or genre and start listening immediately.",
     command: 'vibe "synthwave radio"',
   },
   {
     id: "direct-url",
     category: "stream",
-    tag: "Direct URL",
-    title: "Play Direct YouTube Link",
-    desc: "Streams audio directly from any YouTube video, music playlist, or 24/7 livestream URL without loading video frames.",
+    tag: "Direct Link",
+    title: "Play a YouTube URL",
+    desc: "Paste any YouTube video, music track, or livestream link to play its audio.",
     command: 'vibe "https://youtu.be/5qap5aO4i9A"',
   },
   {
     id: "session-restore",
     category: "stream",
-    tag: "Restore",
-    title: "Instant Session Restore",
-    desc: "Pass -r or --restore to bypass the intro screen and directly reload state—recovering last track, seek position, volume, and playlist from ~/.vibe-fi/state.ini.",
+    tag: "Resume",
+    title: "Resume last session",
+    desc: "Pick up right where you left off — restores your last song, queue, and volume.",
     command: "vibe -r",
     altCommand: "vibe --restore",
     keywords: ["restore", "-r", "--restore", "resume", "state.ini", "state", "session"],
@@ -56,50 +56,63 @@ const COMMANDS: CliCommand[] = [
   {
     id: "local-folder",
     category: "local",
-    tag: "Local Library",
-    title: "Open Local Music Directory",
-    desc: "Launches the TUI focused on your local audio folders. Supports FLAC, MP3, WAV, OPUS, and M4A with zero disk lag.",
+    tag: "Folder",
+    title: "Play music folder",
+    desc: "Browse and play all tracks in your local music folder. Works with all major formats.",
     command: "vibe ~/Music",
   },
   {
     id: "local-file",
     category: "local",
-    tag: "Lossless Audio",
-    title: "Play Standalone Audio File",
-    desc: "Plays a local lossless audio file through libmpv with bit-perfect hardware output and synchronized visualizer.",
+    tag: "Audio File",
+    title: "Play a single file",
+    desc: "Listen to any local audio file directly in your terminal.",
     command: "vibe ~/Music/song.flac",
   },
   {
     id: "mpris-toggle",
     category: "desktop",
-    tag: "MPRIS D-Bus",
-    title: "Toggle Play / Pause via D-Bus",
-    desc: "Linux MPRIS interface allows hardware media keys and window manager keybinds (Hyprland, Sway, i3) to control playback.",
+    tag: "Media Keys",
+    title: "Play or pause from desktop",
+    desc: "Use your keyboard's media keys or window manager shortcuts to play and pause.",
     command: "playerctl -p vibefi play-pause",
   },
   {
     id: "waybar-status",
     category: "desktop",
-    tag: "Waybar / i3",
-    title: "Waybar & Polybar Status Feed",
-    desc: "Prints the currently playing artist and song title formatted cleanly for desktop panels, status bars, and notifications.",
+    tag: "Status Bar",
+    title: "Show current song in status bar",
+    desc: "Display the current track and artist in desktop bars like Waybar, Polybar, or scripts.",
     command: "playerctl -p vibefi metadata --format '{{artist}} - {{title}}'",
   },
   {
     id: "bottle-status",
     category: "bottle",
-    tag: "Isolated Sandbox",
-    title: "Inspect Isolated Runtime Bottle",
-    desc: "Verifies the self-contained dependencies in ~/.vibe-fi/bottle/ to ensure your core OS remains completely clean.",
-    command: "vibe --bottle",
+    tag: "Tools Check",
+    title: "Check helper tools",
+    desc: "Check the status of playback tools and helper programs installed with vibe-fi.",
+    command: "vibe -b",
+    altCommand: "vibe --bottle",
+    keywords: ["bottle", "-b", "--bottle", "sandbox", "dependencies"],
   },
   {
-    id: "bottle-uninstall",
+    id: "skip-update",
     category: "bottle",
-    tag: "Clean Removal",
-    title: "Clean Zero-Residue Uninstall",
-    desc: "Removes Vibe-Fi and cleans up isolated bottle binaries, caches, and configs without leaving junk behind.",
-    command: "vibe --uninstall",
+    tag: "Fast Start",
+    title: "Launch without checking updates",
+    desc: "Skip the automatic update check on startup for the fastest possible launch.",
+    command: "vibe --no-update",
+    keywords: ["update", "offline", "fast", "--no-update"],
+  },
+  {
+    id: "version-info",
+    category: "bottle",
+    tag: "Version",
+    title: "Check version",
+    desc: "Displays the installed version of vibe-fi.",
+    command: "vibe -v",
+    altCommand: "vibe --version",
+    keywords: ["version", "-v", "--version", "info"],
   },
 ];
 
@@ -160,27 +173,27 @@ export default function CliWorkflows(): React.JSX.Element {
   };
 
   return (
-    <section className="py-8 sm:py-12 relative content-auto" id="cli">
+    <section className="py-14 sm:py-20 lg:py-24 relative content-auto" id="cli">
       <div className="container">
         {/* Clean, Compact Section Header */}
-        <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-1 sm:gap-4 border-b border-subtle pb-2.5 mb-4 sm:mb-6">
-          <h2 className="font-brand text-base sm:text-lg font-bold text-text-primary tracking-tight">
-            CLI Commands &amp; Automation
+        <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-1.5 sm:gap-4 border-b border-subtle pb-3.5 mb-6 sm:mb-8">
+          <h2 className="font-brand text-2xl sm:text-3xl font-extrabold text-text-primary tracking-tight">
+            Commands &amp; Shortcuts
           </h2>
-          <span className="text-[0.72rem] sm:text-xs font-mono text-text-muted">
-            Waybar · Hyprland · Shell scripts
+          <span className="text-xs sm:text-sm font-mono text-text-muted">
+            Quick terminal controls
           </span>
         </div>
 
         {/* Toolbar: Category Filter Tabs & Quick Search */}
-        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between flex-wrap gap-2.5 sm:gap-3.5 mb-4 sm:mb-6">
-          <div className="flex items-center gap-1 overflow-x-auto max-w-full p-1 bg-surface border border-subtle rounded-[6px] scrollbar-none [webkit-overflow-scrolling:touch]">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between flex-wrap gap-3 sm:gap-4 mb-6 sm:mb-8">
+          <div className="flex items-center gap-1.5 overflow-x-auto max-w-full p-1.5 bg-surface border border-subtle rounded-[6px] scrollbar-none [webkit-overflow-scrolling:touch]">
             {WORKFLOW_CATEGORIES.map((cat) => (
               <button
                 type="button"
                 key={cat.id}
                 onClick={() => setActiveCategory(cat.id)}
-                className={`cli-cat-btn px-2.5 sm:px-3 py-1 sm:py-1.2 rounded-[6px] font-brand text-[0.76rem] sm:text-[0.82rem] font-semibold whitespace-nowrap shrink-0 transition-colors cursor-pointer ${
+                className={`cli-cat-btn px-3 sm:px-4 py-1.5 sm:py-2 rounded-[6px] font-brand text-[0.8rem] sm:text-[0.86rem] font-semibold whitespace-nowrap shrink-0 transition-colors cursor-pointer ${
                   activeCategory === cat.id
                     ? "active bg-surface-elevated text-sage border border-strong shadow-xs font-bold"
                     : "text-text-secondary hover:text-text-primary hover:bg-surface-subtle border border-transparent"
@@ -191,10 +204,10 @@ export default function CliWorkflows(): React.JSX.Element {
             ))}
           </div>
 
-          <div className="relative flex items-center w-full sm:w-auto sm:min-w-[260px]">
+          <div className="relative flex items-center w-full sm:w-auto sm:min-w-[280px]">
             <svg
-              width="14"
-              height="14"
+              width="15"
+              height="15"
               viewBox="0 0 24 24"
               fill="none"
               stroke="currentColor"
@@ -210,13 +223,13 @@ export default function CliWorkflows(): React.JSX.Element {
               placeholder="Search command (e.g. restore, waybar, flac)..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-8.5 pr-8 py-1.5 sm:py-2 bg-surface border border-strong rounded-[6px] font-sans text-[0.8rem] sm:text-[0.84rem] text-text-primary outline-none focus:border-sage placeholder:text-text-muted transition-colors"
+              className="w-full pl-9 pr-8 py-2 sm:py-2.5 bg-surface border border-strong rounded-[6px] font-sans text-[0.84rem] sm:text-[0.9rem] text-text-primary outline-none focus:border-sage placeholder:text-text-muted transition-colors"
             />
             {searchQuery && (
               <button
                 type="button"
                 onClick={() => setSearchQuery("")}
-                className="absolute right-2.5 text-text-muted hover:text-text-primary text-[0.8rem] px-1.5 py-0.5"
+                className="absolute right-2.5 text-text-muted hover:text-text-primary text-[0.85rem] px-1.5 py-0.5"
                 aria-label="Clear search"
               >
                 ✕
@@ -226,14 +239,14 @@ export default function CliWorkflows(): React.JSX.Element {
         </div>
 
         {/* Grid of Command Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 lg:gap-5">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-7">
           {filteredCommands.map((cmd) => {
             const isCopied = copiedId === cmd.id;
 
             return (
               <div
                 key={cmd.id}
-                className="bg-surface border border-subtle rounded-[6px] p-3.5 sm:p-4.5 lg:p-5 flex flex-col justify-between gap-4 transition-[border-color,transform,box-shadow] duration-150 min-w-0 max-w-full hover:border-strong hover:-translate-y-0.5 hover:shadow-sm"
+                className="bg-surface border border-subtle rounded-[6px] p-5 sm:p-6 lg:p-7 flex flex-col justify-between gap-5 transition-[border-color,transform,box-shadow] duration-150 min-w-0 max-w-full hover:border-strong hover:-translate-y-0.5 hover:shadow-xs"
               >
                 <div>
                   <div className="flex items-center justify-between mb-2 sm:mb-2.5">

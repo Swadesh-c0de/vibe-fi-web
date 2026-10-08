@@ -35,11 +35,71 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  title: "vibe-fi — Terminal Music Player for Linux & macOS",
+  metadataBase: new URL("https://vibe-fi.vercel.app"),
+  title: {
+    default: "vibe-fi — Terminal Music Player",
+    template: "%s | vibe-fi",
+  },
   description:
-    "Fast, lightweight terminal music player. Stream YouTube audio, watch real-time visualizers, and read synchronized lyrics with under 35 MB of RAM.",
+    "Fast, lightweight terminal music player built in Go with Bubble Tea. Stream YouTube audio, watch real-time visualizers, and read synchronized lyrics with ~60 MB of RAM.",
+  keywords: [
+    "vibe-fi",
+    "terminal music player",
+    "tui music player",
+    "bubble tea go",
+    "youtube music cli",
+    "synchronized lyrics cli",
+    "cli audio visualizer",
+    "gruvbox material",
+    "lightweight audio player",
+    "linux music player",
+    "macos cli music",
+  ],
+  authors: [{ name: "Swadesh-c0de", url: "https://github.com/Swadesh-c0de" }],
+  creator: "Swadesh-c0de",
+  publisher: "vibe-fi",
+  openGraph: {
+    title: "vibe-fi — Terminal Music Player",
+    description:
+      "Fast, lightweight terminal music player built in Go with Bubble Tea. Stream YouTube audio, watch real-time visualizers, and read synchronized lyrics with ~60 MB of RAM.",
+    url: "https://vibe-fi.vercel.app",
+    siteName: "vibe-fi",
+    images: [
+      {
+        url: "/showcase.png",
+        width: 1879,
+        height: 1155,
+        alt: "vibe-fi terminal music player showcase",
+      },
+    ],
+    locale: "en_US",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "vibe-fi — Terminal Music Player",
+    description:
+      "Fast, lightweight terminal music player built in Go with Bubble Tea. Stream YouTube audio, watch real-time visualizers, and read synchronized lyrics with ~60 MB of RAM.",
+    images: ["/showcase.png"],
+    creator: "@Swadesh_c0de",
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
   icons: {
-    icon: "/logo.svg",
+    icon: [
+      { url: "/favicon.svg", type: "image/svg+xml" },
+    ],
+    shortcut: "/favicon.svg",
+    apple: "/favicon.svg",
   },
 };
 

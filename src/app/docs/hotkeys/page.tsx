@@ -3,7 +3,7 @@ import Link from "next/link";
 import React from "react";
 
 export const metadata: Metadata = {
-  title: "Hotkeys Reference - Vibe-Fi Documentation",
+  title: "Hotkeys Reference",
   description: "Complete list of keyboard shortcuts for Vibe-Fi terminal music player.",
 };
 
@@ -19,43 +19,46 @@ interface HotkeyDocGroup {
 
 const HOTKEY_GROUPS: HotkeyDocGroup[] = [
   {
-    title: "Global & Navigation",
+    title: "General & Navigation",
     items: [
-      { key: "Q", desc: "Quit Vibe-Fi safely and restore terminal state" },
-      { key: "S", desc: "Open live YouTube search bar" },
-      { key: "U", desc: "Paste and stream direct YouTube URL from clipboard" },
-      { key: "L", desc: "Open Local audio library browser" },
-      { key: "P", desc: "Open Playlists menu" },
-      { key: "R", desc: "Restore last session state (track, position, volume)" },
+      { key: "Q", desc: "Quit Vibe-Fi" },
+      { key: "? / F1", desc: "Open shortcuts help menu" },
+      { key: "S", desc: "Search YouTube for songs or artists" },
+      { key: "U", desc: "Play a YouTube URL from clipboard" },
+      { key: "L", desc: "Open local music folder" },
+      { key: "P", desc: "Open playlists manager" },
+      { key: "C", desc: "View current song queue" },
+      { key: "R", desc: "Replay current song / resume session" },
+      { key: "ESC", desc: "Back to player / close menu" },
     ],
   },
   {
     title: "Playback Controls",
     items: [
-      { key: "Space", desc: "Toggle Play / Pause" },
-      { key: "← / →", desc: "Seek backward / forward 5 seconds" },
-      { key: "+ / -", desc: "Increase / decrease volume by 5%" },
-      { key: "9 / 0", desc: "Alternative volume down / up controls" },
-      { key: "M", desc: "Mute / Unmute audio" },
-      { key: "[ / ]", desc: "Skip to previous / next track in playlist" },
+      { key: "Space", desc: "Play or pause" },
+      { key: "N / >", desc: "Next song" },
+      { key: "B / <", desc: "Previous song" },
+      { key: "← / →", desc: "Rewind / fast-forward 5 seconds" },
+      { key: "+ / -", desc: "Turn volume up / down" },
+      { key: "O", desc: "Toggle Autoplay (keep playing similar tracks)" },
     ],
   },
   {
-    title: "Visualizers & Themes",
+    title: "Visualizer & Lyrics",
     items: [
-      { key: "V", desc: "Cycle visualizer mode (Cava Wave → Neon Flame → Stereo Bars)" },
-      { key: "T", desc: "Cycle terminal color themes (Midnight, Matrix, Nord, HyDE)" },
-      { key: "↑ / ↓", desc: "Scroll synchronized lyrics manually" },
+      { key: "V", desc: "Switch view: Split → Full Visualizer → Full Lyrics" },
+      { key: "T", desc: "Switch theme: Midnight, Nord, Matrix, HyDE, Gruvbox, Slate" },
+      { key: "↑ / ↓", desc: "Scroll lyrics up / down manually" },
+      { key: "Y", desc: "Turn auto-scroll back on" },
     ],
   },
   {
-    title: "Playlists & Library",
+    title: "Playlists & Folders",
     items: [
       { key: "A", desc: "Add currently playing song to a playlist" },
-      { key: "D", desc: "Remove selected song from active playlist" },
-      { key: "E", desc: "Export active playlist to an .m3u file" },
-      { key: "Enter", desc: "Play selected track or enter directory" },
-      { key: "Backspace", desc: "Navigate to parent directory in library" },
+      { key: "Enter", desc: "Play selected song or open folder" },
+      { key: "Backspace", desc: "Go up one folder" },
+      { key: "ESC", desc: "Close folder view and return to player" },
     ],
   },
 ];
@@ -85,7 +88,7 @@ export default function HotkeysDocsPage(): React.JSX.Element {
             <table className="hotkeys-doc-table">
               <thead>
                 <tr>
-                  <th style={{ width: "160px" }}>Shortcut</th>
+                  <th className="w-[120px] sm:w-[170px]">Shortcut</th>
                   <th>Action &amp; Description</th>
                 </tr>
               </thead>

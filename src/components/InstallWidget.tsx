@@ -1,59 +1,79 @@
 "use client";
 
 import Link from "next/link";
-import React, { useState, useSyncExternalStore } from "react";
+import React, { useState } from "react";
 
 export interface InstallOption {
   id: string;
   label: string;
-  badge?: string;
+  shortLabel: string;
   command: string;
   note: string;
+  highlighted: React.ReactNode;
 }
 
 const INSTALL_OPTIONS: InstallOption[] = [
   {
     id: "auto",
-    label: "Automated Script",
-    badge: "Recommended",
-    command: `bash -c "$(curl -fsSL https://raw.githubusercontent.com/Swadesh-c0de/vibe-fi/main/install.sh)"`,
-    note: "Detects OS, installs missing dependencies, builds binary, and configures isolated bottle.",
+    label: "Auto Script",
+    shortLabel: "Auto",
+    command: `curl -fsSL https://raw.githubusercontent.com/Swadesh-c0de/vibe-fi-go/main/install.sh | bash`,
+    note: "Pre-built binary for Linux & macOS. Auto-resolves libmpv.",
+    highlighted: (
+      <>
+        <span className="text-amber font-semibold">curl</span>{" "}
+        <span className="text-text-muted font-normal">-fsSL</span>{" "}
+        <span className="text-text-primary">https://raw.githubusercontent.com/Swadesh-c0de/vibe-fi-go/main/install.sh</span>{" "}
+        <span className="text-sage font-bold">|</span>{" "}
+        <span className="text-amber font-semibold">bash</span>
+      </>
+    ),
   },
   {
-    id: "arch",
-    label: "Arch Linux",
-    badge: "Fastest",
-    command: `git clone https://github.com/Swadesh-c0de/vibe-fi.git && cd vibe-fi && ./install.sh`,
-    note: "Compatible with Arch Linux, EndeavourOS, and Manjaro via pacman.",
-  },
-  {
-    id: "macos",
-    label: "macOS",
-    badge: "Brew",
-    command: `git clone https://github.com/Swadesh-c0de/vibe-fi.git && cd vibe-fi && ./install.sh`,
-    note: "Requires Homebrew for libmpv & yt-dlp dependencies.",
+    id: "global",
+    label: "System-wide",
+    shortLabel: "Global",
+    command: `curl -fsSL https://raw.githubusercontent.com/Swadesh-c0de/vibe-fi-go/main/install.sh | bash -s -- --global`,
+    note: "Installs system-wide into /usr/local/bin for all users.",
+    highlighted: (
+      <>
+        <span className="text-amber font-semibold">curl</span>{" "}
+        <span className="text-text-muted font-normal">-fsSL</span>{" "}
+        <span className="text-text-primary">https://raw.githubusercontent.com/Swadesh-c0de/vibe-fi-go/main/install.sh</span>{" "}
+        <span className="text-sage font-bold">|</span>{" "}
+        <span className="text-amber font-semibold">bash</span>{" "}
+        <span className="text-text-muted font-normal">-s --</span>{" "}
+        <span className="text-gold font-semibold">--global</span>
+      </>
+    ),
   },
   {
     id: "source",
     label: "From Source",
-    badge: "CMake",
-    command: `cmake -B build -S . && cmake --build build -j$(nproc) && sudo cmake --install build`,
-    note: "Requires C++17 compiler, cmake, ninja, libmpv, and ncurses.",
+    shortLabel: "Source",
+    command: `git clone https://github.com/Swadesh-c0de/vibe-fi-go.git && cd vibe-fi-go && make install`,
+    note: "Compiles with Go 1.20+ and Make into ~/.local/bin.",
+    highlighted: (
+      <>
+        <span className="text-amber font-semibold">git</span>{" "}
+        <span className="text-text-secondary">clone</span>{" "}
+        <span className="text-text-primary">https://github.com/Swadesh-c0de/vibe-fi-go.git</span>{" "}
+        <span className="text-sage font-bold">&amp;&amp;</span>{" "}
+        <span className="text-amber font-semibold">cd</span>{" "}
+        <span className="text-text-secondary">vibe-fi-go</span>{" "}
+        <span className="text-sage font-bold">&amp;&amp;</span>{" "}
+        <span className="text-amber font-semibold">make</span>{" "}
+        <span className="text-text-secondary">install</span>
+      </>
+    ),
   },
 ];
 
-const noopSubscribe = () => () => {};
-
 export default function InstallWidget(): React.JSX.Element {
-  const isMac = useSyncExternalStore(
-    noopSubscribe,
-    () => typeof window !== "undefined" && window.navigator.userAgent.toLowerCase().includes("mac"),
-    () => false
-  );
-  const [selectedTab, setSelectedTab] = useState<string | null>(null);
+  const [selectedTab, setSelectedTab] = useState<string>("auto");
   const [copied, setCopied] = useState<boolean>(false);
 
-  const activeTab = selectedTab ?? (isMac ? "macos" : "auto");
+  const activeTab = selectedTab;
   const currentOption = INSTALL_OPTIONS.find((opt) => opt.id === activeTab) || INSTALL_OPTIONS[0];
 
   const handleCopy = (e?: React.MouseEvent): void => {
@@ -93,105 +113,101 @@ export default function InstallWidget(): React.JSX.Element {
 
   return (
     <div className="bg-surface border border-subtle sm:border-strong rounded-[6px] shadow-xs hover:border-strong transition-[border-color,box-shadow] duration-150 overflow-hidden">
-      {/* Sleek Tab Navigation */}
+      {/* Sleek Segmented Tab Switcher */}
       <div
-        className="flex items-center gap-1 p-1 sm:p-1.5 border-b border-subtle bg-surface-elevated/30 overflow-x-auto scrollbar-none [webkit-overflow-scrolling:touch]"
+        className="flex items-center px-3.5 sm:px-5 py-2.5 sm:py-3 border-b border-subtle bg-surface-elevated/30"
         role="tablist"
       >
-        {INSTALL_OPTIONS.map((opt) => {
-          const isActive = activeTab === opt.id;
-          return (
-            <button
-              type="button"
-              key={opt.id}
-              role="tab"
-              aria-selected={isActive}
-              onClick={() => {
-                setSelectedTab(opt.id);
-                setCopied(false);
-              }}
-              className={`install-tab-btn flex items-center gap-1.5 px-2.5 sm:px-3 py-1 sm:py-1.2 rounded-[6px] font-brand text-[0.76rem] sm:text-[0.82rem] font-semibold whitespace-nowrap shrink-0 transition-colors cursor-pointer ${
-                isActive
-                  ? "bg-surface text-text-primary border border-strong shadow-xs font-bold"
-                  : "text-text-secondary hover:text-text-primary hover:bg-surface-subtle border border-transparent"
-              }`}
-            >
-              <span>{opt.label}</span>
-              {opt.badge && (
-                <span
-                  className={`hidden sm:inline-block text-[0.62rem] sm:text-[0.64rem] font-mono font-medium px-1.5 py-0.5 rounded-[4px] transition-colors ${
-                    opt.badge === "Recommended"
-                      ? "bg-sage/15 text-sage border border-sage/25 font-bold"
-                      : "bg-surface-subtle text-text-muted border border-subtle"
+        <div className="inline-flex items-center p-1 rounded-[6px] bg-surface-elevated/70 dark:bg-canvas/80 border border-subtle gap-1 max-w-full">
+          {INSTALL_OPTIONS.map((opt) => {
+            const isActive = activeTab === opt.id;
+            return (
+              <button
+                type="button"
+                key={opt.id}
+                role="tab"
+                aria-selected={isActive}
+                onClick={() => {
+                  setSelectedTab(opt.id);
+                  setCopied(false);
+                }}
+                className={`flex items-center justify-center px-3 sm:px-4 py-1.5 sm:py-1.5 rounded-[4px] font-mono text-[0.76rem] sm:text-[0.82rem] transition-all duration-150 cursor-pointer select-none leading-none ${isActive
+                  ? "bg-surface dark:bg-surface-elevated text-text-primary font-semibold border border-strong/40 shadow-xs"
+                  : "text-text-secondary dark:text-text-muted hover:text-text-primary border border-transparent"
                   }`}
-                >
-                  {opt.badge}
-                </span>
-              )}
-            </button>
-          );
-        })}
+              >
+                <span className="hidden sm:inline">{opt.label}</span>
+                <span className="sm:hidden">{opt.shortLabel}</span>
+              </button>
+            );
+          })}
+        </div>
       </div>
 
-      {/* Pure, Clean Command Row */}
-      <div className="flex items-center justify-between gap-3 px-3.5 sm:px-4.5 py-3 sm:py-3.5 bg-surface transition-colors">
+      {/* Refined Terminal Command Row */}
+      <div className="flex items-center justify-between gap-3 sm:gap-4 px-3.5 sm:px-5.5 py-3.5 sm:py-4.5 bg-code-bg/60 dark:bg-canvas/75 transition-colors group/cmd">
         <div
-          className="flex items-center gap-2 sm:gap-2.5 flex-1 min-w-0 cursor-pointer select-all group/cmd"
+          className="flex items-center gap-2.5 sm:gap-3 flex-1 min-w-0 cursor-pointer select-all"
           onClick={() => handleCopy()}
           title="Click to copy command"
         >
-          <span className="font-mono text-sage font-bold text-sm sm:text-base select-none leading-none shrink-0" aria-hidden="true">
-            ❯
-          </span>
-          <pre className="flex-1 min-w-0 overflow-x-auto scrollbar-none [scrollbar-width:none] [&::-webkit-scrollbar]:hidden font-mono text-[0.78rem] sm:text-[0.84rem] text-text-primary leading-relaxed whitespace-nowrap py-0.5">
-            <code>{currentOption.command}</code>
+          <svg
+            className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-sage shrink-0 select-none transition-all duration-150 group-hover/cmd:translate-x-0.5 group-hover/cmd:text-green"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2.75"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            aria-hidden="true"
+          >
+            <polyline points="9 18 15 12 9 6" />
+          </svg>
+          <pre className="flex-1 min-w-0 overflow-x-auto scrollbar-none [scrollbar-width:none] [&::-webkit-scrollbar]:hidden font-mono text-[0.78rem] sm:text-[0.88rem] text-text-primary leading-relaxed whitespace-nowrap py-0.5 pr-4 sm:pr-5">
+            <code>{currentOption.highlighted}</code>
           </pre>
         </div>
 
         <button
           type="button"
           onClick={handleCopy}
-          className={`terminal-copy-action-btn h-[30px] sm:h-[32px] inline-flex items-center gap-1.5 px-2.5 rounded-[6px] border font-mono text-[0.72rem] sm:text-[0.76rem] font-semibold shrink-0 cursor-pointer transition-colors duration-150 active:scale-95 shadow-xs select-none ${
-            copied
-              ? "bg-green text-text-inverse border-green font-bold shadow-sm"
-              : "bg-surface-elevated hover:bg-surface border-strong hover:border-sage text-text-primary hover:text-sage"
-          }`}
+          className={`terminal-copy-action-btn w-[30px] sm:w-auto h-[30px] sm:h-[34px] inline-flex items-center justify-center gap-1.5 p-0 sm:px-3.5 rounded-[5px] sm:rounded-[6px] border font-mono text-[0.72rem] sm:text-[0.78rem] font-semibold shrink-0 cursor-pointer transition-all duration-150 active:scale-95 shadow-xs select-none ${copied
+            ? "bg-green text-text-inverse border-green font-bold shadow-sm"
+            : "bg-surface hover:bg-surface-elevated border-strong hover:border-sage text-text-primary hover:text-sage"
+            }`}
           aria-label="Copy install command"
           title="Copy to clipboard"
         >
           {copied ? (
             <>
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                 <polyline points="20 6 9 17 4 12" />
               </svg>
-              <span>Copied!</span>
+              <span className="hidden sm:inline">Copied!</span>
             </>
           ) : (
             <>
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
                 <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
               </svg>
-              <span>Copy</span>
+              <span className="hidden sm:inline">Copy</span>
             </>
           )}
         </button>
       </div>
 
       {/* Lightweight Note & Documentation Link Footer */}
-      <div className="px-3.5 sm:px-4.5 py-2 sm:py-2.5 bg-surface-elevated/25 border-t border-subtle flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 text-[0.75rem] sm:text-[0.78rem]">
-        <div className="flex items-center gap-1.5 text-text-secondary min-w-0">
-          <span className="font-mono text-[0.64rem] uppercase tracking-wider font-bold text-amber px-1.5 py-0.5 bg-amber/10 border border-amber/20 rounded-[4px] shrink-0">
-            Info
-          </span>
-          <span className="truncate sm:whitespace-normal">{currentOption.note}</span>
-        </div>
+      <div className="px-3.5 sm:px-5.5 py-2.5 sm:py-3 bg-surface-elevated/25 border-t border-subtle flex items-center justify-between gap-3 text-[0.76rem] sm:text-[0.82rem]">
+        <p className="text-text-secondary leading-relaxed min-w-0 flex-1">
+          {currentOption.note}
+        </p>
         <Link
           href="/docs/installation"
-          className="text-sage hover:text-text-primary font-semibold whitespace-nowrap inline-flex items-center gap-1 transition-colors shrink-0 group/link text-[0.75rem] sm:text-[0.78rem]"
+          className="text-sage hover:text-text-primary font-semibold whitespace-nowrap inline-flex items-center gap-1.5 transition-colors shrink-0 group/guide"
         >
-          <span>Installation guide</span>
-          <span className="transition-transform group-hover/link:translate-x-0.5" aria-hidden="true">→</span>
+          <span>Full guide</span>
+          <span aria-hidden="true" className="transition-transform group-hover/guide:translate-x-0.5">→</span>
         </Link>
       </div>
     </div>

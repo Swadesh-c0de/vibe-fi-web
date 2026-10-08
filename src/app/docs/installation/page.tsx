@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import React from "react";
+import DocCodeBlock from "@/components/DocCodeBlock";
 
 export const metadata: Metadata = {
-  title: "Installation Guide - Vibe-Fi Documentation",
+  title: "Installation",
   description: "Complete installation guide for Vibe-Fi on Arch Linux, macOS, Ubuntu, Debian, Fedora, and building from source.",
 };
 
@@ -18,132 +19,104 @@ export default function InstallationDocsPage(): React.JSX.Element {
         <span className="current">Installation</span>
       </div>
 
-      <h1 className="docs-page-title">Installing Vibe-Fi</h1>
+      <h1 className="docs-page-title">Installation Guide</h1>
       <p className="docs-lead-text">
-        Vibe-Fi is engineered to run seamlessly on Linux and macOS with minimal dependencies.
-        Choose the installation method suited to your environment.
+        Vibe-Fi runs smoothly on Linux and macOS. Choose the installation method that fits your setup best.
       </p>
 
       <hr className="docs-divider" />
 
       {/* Method 1: Automated Script */}
-      <h2>1. Automated Script (Recommended)</h2>
+      <h2>1. Quick Install (Recommended)</h2>
       <p>
-        The automated script auto-detects your operating system and package manager, installs missing system libraries,
-        compiles Vibe-Fi, and places the binary in your <code>PATH</code>:
+        The universal install script automatically detects your platform (Linux or macOS, x86_64 or ARM64), downloads the pre-built release binary, and configures it in one command:
       </p>
 
-      <div className="docs-code-block">
-        <pre><code>{'bash -c "$(curl -fsSL https://raw.githubusercontent.com/Swadesh-c0de/vibe-fi/main/install.sh)"'}</code></pre>
-      </div>
+      <DocCodeBlock
+        title="bash"
+        code="curl -fsSL https://raw.githubusercontent.com/Swadesh-c0de/vibe-fi-go/main/install.sh | bash"
+      />
 
       <div className="docs-callout callout-note">
         <div className="callout-icon">ℹ️</div>
         <div className="callout-body">
-          The installer creates an isolated bottle at <code>~/.vibe-fi/bottle/</code> for standalone helpers (such as <code>yt-dlp</code>) so your global system remains unmodified.
+          Installs into your user folder (<code>~/.local/bin/vibe</code>). Ensure <code>~/.local/bin</code> is in your <code>$PATH</code>.
         </div>
       </div>
 
-      {/* Method 2: Arch Linux */}
-      <h2>2. Arch Linux &amp; EndeavourOS</h2>
+      {/* Method 2: System-Wide */}
+      <h2>2. System-Wide Installation</h2>
       <p>
-        On Arch Linux and derivatives, install via the repository script or manual build:
+        To install Vibe-Fi for all users on your system into <code>/usr/local/bin</code>, pass the <code>--global</code> flag:
       </p>
 
-      <div className="docs-code-block">
-        <pre><code># Clone and run the installer
-git clone https://github.com/Swadesh-c0de/vibe-fi.git
-cd vibe-fi
-chmod +x install.sh
-./install.sh</code></pre>
-      </div>
+      <DocCodeBlock
+        title="bash (root / global)"
+        code="curl -fsSL https://raw.githubusercontent.com/Swadesh-c0de/vibe-fi-go/main/install.sh | bash -s -- --global"
+      />
 
-      {/* Method 3: macOS */}
-      <h2>3. macOS (Apple Silicon &amp; Intel)</h2>
+      {/* Method 3: Prerequisites */}
+      <h2>3. Prerequisites (Audio Engine)</h2>
       <p>
-        Make sure you have <a href="https://brew.sh" target="_blank" rel="noopener noreferrer">Homebrew</a> installed.
-        Vibe-Fi utilizes <code>mpv</code> and <code>yt-dlp</code>:
+        Vibe-Fi links against <code>libmpv</code> for hardware-accelerated, high-fidelity audio streaming. The installer script attempts to resolve this automatically, or you can install it using your system package manager:
       </p>
 
-      <div className="docs-code-block">
-        <pre><code># 1. Install prerequisites via Homebrew
-brew install mpv yt-dlp cmake pkg-config
+      <h3>Arch Linux &amp; EndeavourOS:</h3>
+      <DocCodeBlock title="pacman" code="sudo pacman -S mpv" />
 
-# 2. Clone and install vibe-fi
-git clone https://github.com/Swadesh-c0de/vibe-fi.git
-cd vibe-fi
-chmod +x install.sh
-./install.sh</code></pre>
-      </div>
+      <h3>macOS (Homebrew):</h3>
+      <DocCodeBlock title="brew" code="brew install mpv" />
 
-      {/* Method 4: Ubuntu / Debian / Fedora */}
-      <h2>4. Ubuntu, Debian &amp; Fedora</h2>
-      <p>Install the required build dependencies before compiling:</p>
-
-      <h3>Ubuntu / Debian:</h3>
-      <div className="docs-code-block">
-        <pre><code>sudo apt update
-sudo apt install -y build-essential cmake pkg-config libmpv-dev libncurses-dev curl
-git clone https://github.com/Swadesh-c0de/vibe-fi.git
-cd vibe-fi
-./install.sh</code></pre>
-      </div>
+      <h3>Ubuntu &amp; Debian:</h3>
+      <DocCodeBlock title="apt" code="sudo apt update && sudo apt install -y libmpv2" />
 
       <h3>Fedora:</h3>
-      <div className="docs-code-block">
-        <pre><code>sudo dnf install -y gcc-c++ cmake pkgconf-pkg-config mpv-devel ncurses-devel curl
-git clone https://github.com/Swadesh-c0de/vibe-fi.git
-cd vibe-fi
-./install.sh</code></pre>
-      </div>
+      <DocCodeBlock title="dnf" code="sudo dnf install -y mpv-libs" />
 
-      {/* Method 5: Building from Source */}
-      <h2>5. Building from Source with CMake</h2>
+      {/* Method 4: Building from Source */}
+      <h2>4. Building from Source</h2>
       <p>
-        For power users who prefer standard CMake build pipelines:
+        If you prefer building from source with Go (1.20+) and Make:
       </p>
 
-      <div className="docs-code-block">
-        <pre><code>git clone https://github.com/Swadesh-c0de/vibe-fi.git
-cd vibe-fi
-
-# Configure with CMake (C++17)
-cmake -B build -DCMAKE_BUILD_TYPE=Release
-
-# Compile using all available CPU threads
-cmake --build build -j$(nproc 2&gt;/dev/null || sysctl -n hw.ncpu)
-
-# Install binary to /usr/local/bin
-sudo cmake --install build</code></pre>
-      </div>
+      <DocCodeBlock
+        title="bash"
+        code={`git clone https://github.com/Swadesh-c0de/vibe-fi-go.git
+cd vibe-fi-go
+make install`}
+      />
 
       {/* Verifying & Bottle Status */}
-      <h2>6. Verifying the Installation</h2>
+      <h2>5. Check Your Installation</h2>
       <p>
-        Confirm that Vibe-Fi and its bottle dependencies are correctly configured:
+        Confirm that Vibe-Fi is ready to go:
       </p>
 
-      <div className="docs-code-block">
-        <pre><code># Check version
+      <DocCodeBlock
+        title="terminal"
+        code={`# Check the installed version
 vibe --version
 
-# Inspect isolated bottle dependencies
-vibe --bottle</code></pre>
-      </div>
+# Check installed helpers and audio tools
+vibe --bottle
+
+# Fast launch (skips update check)
+vibe --no-update`}
+      />
 
       {/* Clean Uninstallation */}
-      <h2>7. Clean Uninstallation</h2>
+      <h2>6. How to Uninstall</h2>
       <p>
-        Unlike many terminal players that scatter config and cache files everywhere, Vibe-Fi includes a clean uninstaller:
+        Vibe-Fi can be completely removed at any time with a single command:
       </p>
 
-      <div className="docs-code-block">
-        <pre><code>vibe --uninstall
-# Or run ./uninstall.sh from the repository</code></pre>
-      </div>
+      <DocCodeBlock
+        title="terminal"
+        code="vibe --uninstall"
+      />
 
       <p>
-        This cleanly removes the binary, the bottle directory (<code>~/.vibe-fi/bottle/</code>), and cached lyrics without leaving orphaned files.
+        This cleanly removes the binary, cached lyrics, and helper tools without leaving unwanted files behind.
       </p>
     </div>
   );
