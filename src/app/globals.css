@@ -129,6 +129,29 @@ body {
   background-color: var(--bg-canvas);
   color: var(--text-primary);
   overflow-x: hidden;
+  position: relative;
+}
+
+/* Ambient Technical Dot Matrix Background (Pure 0 KB GPU Canvas) */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background-image: radial-gradient(var(--border-strong) 1px, transparent 1px);
+  background-size: 24px 24px;
+  opacity: 0.25;
+}
+
+:root[data-theme="light"] body::before {
+  opacity: 0.38;
+}
+
+code, kbd, pre, .font-mono {
+  font-feature-settings: normal;
+  font-variation-settings: normal;
+  text-rendering: optimizeSpeed;
 }
 
 /* ─── INSTANT ZERO-JANK THEME TRANSITION FREEZE ───────────────────── */
@@ -144,11 +167,6 @@ html.disable-transitions *::after {
 }
 
 /* ─── MODERN RENDERING & VIEWPORT OPTIMIZATIONS ───────────────────── */
-.content-auto {
-  content-visibility: auto;
-  contain-intrinsic-size: 1px 420px;
-}
-
 .gpu-layer {
   transform: translateZ(0);
   backface-visibility: hidden;
@@ -233,22 +251,20 @@ html.disable-transitions *::after {
   font-size: 0.95rem;
   font-weight: 700;
   border-radius: var(--radius-sm);
-  transition: color var(--transition-fast), background-color var(--transition-fast), border-color var(--transition-fast), transform var(--transition-fast), box-shadow var(--transition-fast), filter var(--transition-fast);
+  transition: color var(--transition-fast), background-color var(--transition-fast), border-color var(--transition-fast);
   line-height: 1;
   text-align: center;
   white-space: nowrap;
 }
 
+.btn:active {
+  transform: scale(0.98);
+}
+
 .btn-primary {
   background-color: var(--accent-sage);
   color: var(--text-inverse);
-  box-shadow: 0 4px 14px -3px var(--accent-sage);
-}
-
-.btn-primary:hover {
-  filter: brightness(1.12);
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px -3px var(--accent-sage);
+  box-shadow: 0 2px 10px -2px var(--accent-sage);
 }
 
 .btn-secondary {
@@ -257,11 +273,23 @@ html.disable-transitions *::after {
   border: 1px solid var(--border-strong);
 }
 
-.btn-secondary:hover {
-  background-color: var(--bg-surface);
-  border-color: var(--accent-sage);
-  color: var(--accent-sage);
-  transform: translateY(-2px);
+@media (hover: hover) and (pointer: fine) {
+  .btn {
+    transition: color var(--transition-fast), background-color var(--transition-fast), border-color var(--transition-fast), transform var(--transition-fast), box-shadow var(--transition-fast), filter var(--transition-fast);
+  }
+
+  .btn-primary:hover {
+    filter: brightness(1.1);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px -3px var(--accent-sage);
+  }
+
+  .btn-secondary:hover {
+    background-color: var(--bg-surface);
+    border-color: var(--accent-sage);
+    color: var(--accent-sage);
+    transform: translateY(-2px);
+  }
 }
 
 /* ─── POWERLINE PROMPT (ARCH LINUX REFERENCE) ─────────────────────── */
@@ -564,16 +592,22 @@ html.disable-transitions *::after {
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-md);
   padding: 1.75rem;
-  transition: border-color var(--transition-fast), transform var(--transition-fast), background-color var(--transition-fast), box-shadow var(--transition-fast);
+  transition: border-color var(--transition-fast), background-color var(--transition-fast);
   display: flex;
   flex-direction: column;
 }
 
-.docs-card-link:hover {
-  border-color: var(--accent-sage);
-  transform: translateY(-2px);
-  background-color: var(--bg-surface-elevated);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+@media (hover: hover) and (pointer: fine) {
+  .docs-card-link {
+    transition: border-color var(--transition-fast), transform var(--transition-fast), background-color var(--transition-fast), box-shadow var(--transition-fast);
+  }
+
+  .docs-card-link:hover {
+    border-color: var(--accent-sage);
+    transform: translateY(-2px);
+    background-color: var(--bg-surface-elevated);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  }
 }
 
 .card-link-title {

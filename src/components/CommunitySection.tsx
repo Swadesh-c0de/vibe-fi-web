@@ -2,11 +2,11 @@ import React from "react";
 
 export default function CommunitySection(): React.JSX.Element {
   return (
-    <section className="py-14 sm:py-20 lg:py-24 content-auto" id="community">
+    <section className="py-14 sm:py-20 lg:py-24" id="community">
       <div className="container max-w-[820px]">
-        <div className="relative overflow-hidden bg-surface border border-subtle rounded-[6px] py-10 px-6 sm:py-14 sm:px-10 text-center shadow-xs">
+        <div className="relative overflow-hidden bg-surface border border-subtle rounded-[6px] py-8 px-5 sm:py-14 sm:px-10 text-center shadow-xs">
           <div className="relative z-10 max-w-[560px] mx-auto">
-            <h2 className="font-brand text-2xl sm:text-3xl font-extrabold text-text-primary tracking-tight mb-3">
+            <h2 className="font-brand text-[clamp(1.5rem,4vw,2.25rem)] font-extrabold text-text-primary tracking-tight mb-3">
               Free &amp; Open Source
             </h2>
 

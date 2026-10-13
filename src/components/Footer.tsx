@@ -3,7 +3,7 @@ import React from "react";
 
 export default function Footer(): React.JSX.Element {
   return (
-    <footer className="mt-auto border-t border-subtle py-10 sm:py-16 pb-8 sm:pb-12 content-auto overflow-hidden">
+    <footer className="mt-auto border-t border-subtle py-10 sm:py-16 pb-8 sm:pb-12 overflow-hidden">
       <div className="container">
         <div className="flex flex-col md:flex-row justify-between flex-wrap gap-8 md:gap-16 mb-10 md:mb-16">
           <div className="w-full md:max-w-[360px] min-w-0">

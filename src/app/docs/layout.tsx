@@ -120,7 +120,7 @@ export default function DocsLayout({
       <div className="container flex flex-col lg:flex-row gap-0 lg:gap-12 xl:gap-16 pt-5 sm:pt-8 lg:pt-14 pb-16 sm:pb-28 flex-1">
         {/* Sleek Mobile Docs Sub-Navigation Bar */}
         <div className="block lg:hidden w-full mb-5">
-          <div className="bg-surface border border-subtle sm:border-strong rounded-lg shadow-xs overflow-hidden transition-all">
+          <div className="bg-surface border border-subtle sm:border-strong rounded-lg shadow-xs overflow-hidden transition-colors">
             <button
               type="button"
               className="w-full flex items-center justify-between px-3.5 py-2.5 text-text-primary cursor-pointer select-none transition-colors hover:bg-surface-elevated/60"

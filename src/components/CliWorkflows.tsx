@@ -173,11 +173,11 @@ export default function CliWorkflows(): React.JSX.Element {
   };
 
   return (
-    <section className="py-14 sm:py-20 lg:py-24 relative content-auto" id="cli">
+    <section className="py-14 sm:py-20 lg:py-24 relative" id="cli">
       <div className="container">
         {/* Clean, Compact Section Header */}
-        <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-1.5 sm:gap-4 border-b border-subtle pb-3.5 mb-6 sm:mb-8">
-          <h2 className="font-brand text-2xl sm:text-3xl font-extrabold text-text-primary tracking-tight">
+        <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-1.5 sm:gap-4 border-b border-dashed border-subtle pb-3.5 mb-6 sm:mb-8">
+          <h2 className="font-brand text-[clamp(1.5rem,4vw,2.25rem)] font-extrabold text-text-primary tracking-tight">
             Commands &amp; Shortcuts
           </h2>
           <span className="text-xs sm:text-sm font-mono text-text-muted">
@@ -223,7 +223,7 @@ export default function CliWorkflows(): React.JSX.Element {
               placeholder="Search command (e.g. restore, waybar, flac)..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-9 pr-8 py-2 sm:py-2.5 bg-surface border border-strong rounded-[6px] font-sans text-[0.84rem] sm:text-[0.9rem] text-text-primary outline-none focus:border-sage placeholder:text-text-muted transition-colors"
+              className="w-full pl-9 pr-8 py-2 sm:py-2.5 bg-surface border border-subtle sm:border-strong rounded-[6px] font-sans text-[0.84rem] sm:text-[0.9rem] text-text-primary outline-none focus:border-sage placeholder:text-text-muted transition-colors"
             />
             {searchQuery && (
               <button
@@ -239,14 +239,14 @@ export default function CliWorkflows(): React.JSX.Element {
         </div>
 
         {/* Grid of Command Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-7">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3.5 sm:gap-6 lg:gap-7">
           {filteredCommands.map((cmd) => {
             const isCopied = copiedId === cmd.id;
 
             return (
               <div
                 key={cmd.id}
-                className="bg-surface border border-subtle rounded-[6px] p-5 sm:p-6 lg:p-7 flex flex-col justify-between gap-5 transition-[border-color,transform,box-shadow] duration-150 min-w-0 max-w-full hover:border-strong hover:-translate-y-0.5 hover:shadow-xs"
+                className="bg-surface border border-subtle rounded-[6px] p-4.5 sm:p-6 lg:p-7 flex flex-col justify-between gap-3.5 sm:gap-5 transition-colors duration-150 min-w-0 max-w-full hover:border-strong md:hover:-translate-y-0.5 shadow-xs"
               >
                 <div>
                   <div className="flex items-center justify-between mb-2 sm:mb-2.5">
@@ -278,7 +278,7 @@ export default function CliWorkflows(): React.JSX.Element {
 
                 <div className="flex flex-col gap-1.5 pt-2 border-t border-subtle/70">
                   <div
-                    className="flex items-center justify-between p-2 sm:px-2.5 sm:py-2 bg-canvas border border-strong rounded-[6px] font-mono text-[0.74rem] sm:text-[0.78rem] text-sage font-bold cursor-pointer transition-colors hover:border-sage select-all min-w-0 shadow-xs"
+                    className="flex items-center justify-between p-2 sm:px-2.5 sm:py-2 bg-canvas border border-subtle sm:border-strong rounded-[6px] font-mono text-[0.74rem] sm:text-[0.78rem] text-sage font-bold cursor-pointer transition-colors hover:border-sage select-all min-w-0 shadow-xs active:bg-surface-elevated"
                     onClick={() => handleCopy(cmd.id, cmd.command)}
                     title="Click to copy command"
                     role="button"
@@ -298,7 +298,7 @@ export default function CliWorkflows(): React.JSX.Element {
 
                   {cmd.altCommand && (
                     <div
-                      className="flex items-center justify-between px-2.5 py-1 bg-surface-subtle border border-subtle rounded-[6px] font-mono text-[0.7rem] sm:text-[0.74rem] text-text-secondary cursor-pointer transition-colors hover:border-sage hover:text-text-primary select-all min-w-0"
+                      className="flex items-center justify-between px-2.5 py-1 bg-surface-subtle border border-subtle/80 rounded-[6px] font-mono text-[0.7rem] sm:text-[0.74rem] text-text-secondary cursor-pointer transition-colors hover:border-sage hover:text-text-primary select-all min-w-0 active:bg-surface-elevated"
                       onClick={() => handleCopy(`${cmd.id}-alt`, cmd.altCommand!)}
                       title="Click to copy alternate flag"
                       role="button"

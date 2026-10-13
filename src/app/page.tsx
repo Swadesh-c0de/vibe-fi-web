@@ -38,8 +38,8 @@ export default function HomePage(): React.JSX.Element {
             </div>
 
             {/* Hero Main Typography */}
-            <h1 className="font-brand tracking-tight mb-5 sm:mb-7 max-w-[920px]">
-              <span className="block text-[3.2rem] xs:text-[4.2rem] sm:text-[5.5rem] md:text-[6.6rem] font-black leading-none tracking-tight">
+            <h1 className="font-brand tracking-tight mb-4 sm:mb-6 max-w-[920px]">
+              <span className="block text-[clamp(2.7rem,8.5vw,6.4rem)] font-black leading-none tracking-tight">
                 <span className="text-text-primary">vibe</span>
                 <span className="bg-gradient-to-r from-sage via-green to-amber bg-clip-text text-transparent">
                   -fi
@@ -82,9 +82,9 @@ export default function HomePage(): React.JSX.Element {
         </section>
 
         {/* ─── LIVE SPECS & STATS STRIP ───────────────────────────── */}
-        <section className="border-y border-subtle/70 py-3.5 sm:py-4.5 bg-surface/30">
+        <section className="border-y border-dashed border-subtle py-3.5 sm:py-4.5 bg-surface/20">
           <div className="container max-w-[960px]">
-            <div className="flex items-center justify-center gap-x-3.5 sm:gap-x-5 gap-y-2.5 flex-wrap text-[0.76rem] sm:text-[0.82rem] font-mono text-text-muted">
+            <div className="flex items-center justify-center gap-x-3.5 sm:gap-x-5 gap-y-2 flex-wrap text-[0.76rem] sm:text-[0.82rem] font-mono text-text-muted">
               <span className="text-text-secondary font-medium">
                 Linux &amp; macOS
               </span>
@@ -117,10 +117,10 @@ export default function HomePage(): React.JSX.Element {
         </section>
 
         {/* ─── QUICK INSTALL WIDGET ───────────────────────────────── */}
-        <section className="py-14 sm:py-20 lg:py-24 content-auto" id="install">
+        <section className="py-14 sm:py-20 lg:py-24" id="install">
           <div className="container">
             <div className="max-w-[860px] mx-auto mb-4 sm:mb-6 flex flex-col sm:flex-row sm:items-baseline justify-between gap-1.5 px-1">
-              <h2 className="font-brand text-2xl sm:text-3xl font-extrabold text-text-primary tracking-tight">
+              <h2 className="font-brand text-[clamp(1.5rem,4vw,2.25rem)] font-extrabold text-text-primary tracking-tight">
                 Quick Install
               </h2>
               <span className="text-xs sm:text-sm font-mono text-text-muted">

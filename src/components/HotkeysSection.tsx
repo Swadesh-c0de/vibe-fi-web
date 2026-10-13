@@ -201,8 +201,12 @@ export default function HotkeysSection(): React.JSX.Element {
   const [activeTab, setActiveTab] = useState<string>("all");
   const [activeShortcutId, setActiveShortcutId] = useState<string | null>(null);
 
-  // Live keyboard testing
+  // Live keyboard testing (active only on devices with physical keyboard/pointer)
   useEffect(() => {
+    if (typeof window !== "undefined" && window.matchMedia && !window.matchMedia("(hover: hover)").matches) {
+      return;
+    }
+
     let timeoutId: NodeJS.Timeout;
 
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -243,11 +247,11 @@ export default function HotkeysSection(): React.JSX.Element {
   );
 
   return (
-    <section className="py-14 sm:py-20 lg:py-24 content-auto" id="hotkeys">
+    <section className="py-14 sm:py-20 lg:py-24" id="hotkeys">
       <div className="container max-w-[1040px]">
         {/* Clean, Compact Section Header */}
-        <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-1.5 sm:gap-4 border-b border-subtle pb-3.5 mb-6 sm:mb-8">
-          <h2 className="font-brand text-2xl sm:text-3xl font-extrabold text-text-primary tracking-tight">
+        <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-1.5 sm:gap-4 border-b border-dashed border-subtle pb-3.5 mb-6 sm:mb-8">
+          <h2 className="font-brand text-[clamp(1.5rem,4vw,2.25rem)] font-extrabold text-text-primary tracking-tight">
             Keyboard Shortcuts
           </h2>
           <span className="text-xs sm:text-sm font-mono text-text-muted">
@@ -256,8 +260,8 @@ export default function HotkeysSection(): React.JSX.Element {
         </div>
 
         {/* Category Tabs Scrolling Inside the Card */}
-        <div className="flex justify-center mb-6 sm:mb-8 max-w-full px-2">
-          <div className="inline-flex items-center gap-1.5 p-1.5 bg-surface border border-subtle rounded-[6px] max-w-full overflow-x-auto scrollbar-none shadow-xs">
+        <div className="flex justify-center mb-6 sm:mb-8 max-w-full px-1">
+          <div className="inline-flex items-center gap-1 p-1 sm:p-1.5 bg-surface border border-subtle rounded-[6px] max-w-full overflow-x-auto scrollbar-none shadow-xs">
             {FILTER_TABS.map((tab) => {
               const isActive = activeTab === tab.id;
               return (
@@ -272,10 +276,11 @@ export default function HotkeysSection(): React.JSX.Element {
                       inline: "center",
                     });
                   }}
-                  className={`px-3.5 sm:px-4 py-1.5 sm:py-2 rounded-[6px] text-[0.78rem] sm:text-[0.84rem] font-mono font-medium transition-colors duration-150 whitespace-nowrap shrink-0 cursor-pointer ${isActive
-                    ? "bg-surface-elevated text-text-primary border border-strong shadow-xs font-semibold"
-                    : "text-text-muted hover:text-text-primary hover:bg-surface-subtle border border-transparent"
-                    }`}
+                  className={`px-3 sm:px-4 py-1.5 sm:py-2 rounded-[5px] sm:rounded-[6px] text-[0.76rem] sm:text-[0.84rem] font-mono font-medium transition-colors duration-150 whitespace-nowrap shrink-0 cursor-pointer ${
+                    isActive
+                      ? "bg-surface-elevated text-text-primary border border-strong shadow-xs font-semibold"
+                      : "text-text-muted hover:text-text-primary hover:bg-surface-subtle border border-transparent"
+                  }`}
                 >
                   {tab.label}
                 </button>
@@ -286,18 +291,19 @@ export default function HotkeysSection(): React.JSX.Element {
 
         {/* 2x2 Clean Grouped Deck */}
         <div
-          className={`grid gap-4 sm:gap-6 ${activeTab === "all"
-            ? "grid-cols-1 md:grid-cols-2"
-            : "grid-cols-1 max-w-[620px] mx-auto"
-            }`}
+          className={`grid gap-3.5 sm:gap-6 ${
+            activeTab === "all"
+              ? "grid-cols-1 md:grid-cols-2"
+              : "grid-cols-1 max-w-[620px] mx-auto"
+          }`}
         >
           {visibleGroups.map((group) => (
             <div
               key={group.id}
-              className="bg-surface border border-subtle rounded-[6px] p-5 sm:p-6 transition-[border-color,box-shadow] duration-150 shadow-xs"
+              className="bg-surface border border-subtle rounded-[6px] p-4.5 sm:p-6 transition-colors duration-150 shadow-xs"
             >
               {/* Category Header */}
-              <div className="flex items-center justify-between pb-3 mb-2.5 border-b border-subtle">
+              <div className="flex items-center justify-between pb-2.5 mb-2 border-b border-subtle">
                 <h3 className="font-brand font-bold text-sm sm:text-base text-text-primary tracking-tight">
                   {group.title}
                 </h3>
@@ -319,10 +325,11 @@ export default function HotkeysSection(): React.JSX.Element {
                         setActiveShortcutId(item.id);
                         setTimeout(() => setActiveShortcutId(null), 1000);
                       }}
-                      className={`flex items-center justify-between py-2 sm:py-2.5 px-2 sm:px-2.5 -mx-1 rounded-[6px] transition-colors duration-150 cursor-pointer ${isActive
-                        ? "bg-surface-elevated ring-1"
-                        : "hover:bg-surface-elevated/50"
-                        }`}
+                      className={`flex items-center justify-between py-2 sm:py-2.5 px-2 sm:px-2.5 -mx-1 rounded-[6px] transition-colors duration-150 cursor-pointer ${
+                        isActive
+                          ? "bg-surface-elevated ring-1"
+                          : "hover:bg-surface-elevated/50"
+                      }`}
                       style={{
                         borderColor: isActive ? group.borderGlow : undefined,
                       }}
@@ -332,7 +339,7 @@ export default function HotkeysSection(): React.JSX.Element {
                         <div className="font-sans text-[0.82rem] sm:text-[0.88rem] font-medium text-text-primary truncate">
                           {item.label}
                         </div>
-                        <div className="font-mono text-[0.7rem] sm:text-[0.74rem] text-text-muted truncate mt-0.5">
+                        <div className="font-mono text-[0.68rem] sm:text-[0.74rem] text-text-muted truncate mt-0.5">
                           {item.hint}
                         </div>
                       </div>
@@ -342,10 +349,11 @@ export default function HotkeysSection(): React.JSX.Element {
                         {item.keys.map((k, kIdx) => (
                           <kbd
                             key={kIdx}
-                            className={`inline-flex items-center justify-center min-w-[26px] h-[24px] sm:h-[26px] px-2 rounded-[6px] font-mono text-[0.72rem] sm:text-[0.76rem] font-bold tracking-tight transition-[colors,transform] duration-150 select-none ${isActive
-                              ? "bg-green/15 text-green border border-green scale-105"
-                              : "bg-canvas dark:bg-surface-elevated text-text-primary border border-strong border-b-2 shadow-xs"
-                              }`}
+                            className={`inline-flex items-center justify-center min-w-[26px] h-[24px] sm:h-[26px] px-2 rounded-[5px] sm:rounded-[6px] font-mono text-[0.72rem] sm:text-[0.76rem] font-bold tracking-tight transition-[colors,transform] duration-150 select-none ${
+                              isActive
+                                ? "bg-green/15 text-green border border-green scale-105"
+                                : "bg-canvas dark:bg-surface-elevated text-text-primary border border-subtle sm:border-strong border-b-2 shadow-xs"
+                            }`}
                           >
                             {k}
                           </kbd>

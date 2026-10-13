@@ -145,7 +145,7 @@ export default function InstallWidget(): React.JSX.Element {
       </div>
 
       {/* Refined Terminal Command Row */}
-      <div className="flex items-center justify-between gap-3 sm:gap-4 px-3.5 sm:px-5.5 py-3.5 sm:py-4.5 bg-code-bg/60 dark:bg-canvas/75 transition-colors group/cmd">
+      <div className="flex items-center justify-between gap-2.5 sm:gap-4 px-3 sm:px-5.5 py-3 sm:py-4 bg-code-bg/60 dark:bg-canvas/75 transition-colors group/cmd">
         <div
           className="flex items-center gap-2.5 sm:gap-3 flex-1 min-w-0 cursor-pointer select-all"
           onClick={() => handleCopy()}
@@ -198,7 +198,7 @@ export default function InstallWidget(): React.JSX.Element {
       </div>
 
       {/* Lightweight Note & Documentation Link Footer */}
-      <div className="px-3.5 sm:px-5.5 py-2.5 sm:py-3 bg-surface-elevated/25 border-t border-subtle flex items-center justify-between gap-3 text-[0.76rem] sm:text-[0.82rem]">
+      <div className="px-3 sm:px-5.5 py-2.5 sm:py-3 bg-surface-elevated/25 border-t border-subtle flex items-center justify-between gap-3 text-[0.76rem] sm:text-[0.82rem]">
         <p className="text-text-secondary leading-relaxed min-w-0 flex-1">
           {currentOption.note}
         </p>

@@ -82,10 +82,10 @@ export default function FeaturesGrid(): React.JSX.Element {
   ];
 
   return (
-    <section className="py-14 sm:py-20 lg:py-24 content-auto" id="features">
+    <section className="py-14 sm:py-20 lg:py-24" id="features">
       <div className="container">
-        <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-1.5 sm:gap-4 border-b border-subtle pb-3.5 mb-8 sm:mb-10">
-          <h2 className="font-brand text-2xl sm:text-3xl font-extrabold text-text-primary tracking-tight">
+        <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-1.5 sm:gap-4 border-b border-dashed border-subtle pb-3.5 mb-8 sm:mb-10">
+          <h2 className="font-brand text-[clamp(1.5rem,4vw,2.25rem)] font-extrabold text-text-primary tracking-tight">
             Key Features
           </h2>
           <span className="text-xs sm:text-sm font-mono text-text-muted">
@@ -93,12 +93,12 @@ export default function FeaturesGrid(): React.JSX.Element {
           </span>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-7">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3.5 sm:gap-6 lg:gap-7">
           {features.map((feat) => (
             <div
               key={feat.id}
               id={feat.id}
-              className="bg-surface border border-subtle rounded-[6px] p-6 sm:p-7 transition-colors duration-150 hover:border-strong flex flex-col shadow-xs"
+              className="bg-surface border border-subtle rounded-[6px] p-5 sm:p-7 transition-colors duration-150 hover:border-strong flex flex-col shadow-xs"
             >
               <div className="text-sage mb-4 shrink-0 [&>svg]:w-6 [&>svg]:h-6">
                 {feat.icon}
