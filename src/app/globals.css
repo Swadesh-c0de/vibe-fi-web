@@ -129,23 +129,6 @@ body {
   background-color: var(--bg-canvas);
   color: var(--text-primary);
   overflow-x: hidden;
-  position: relative;
-}
-
-/* Ambient Technical Dot Matrix Background (Pure 0 KB GPU Canvas) */
-body::before {
-  content: "";
-  position: fixed;
-  inset: 0;
-  z-index: -1;
-  pointer-events: none;
-  background-image: radial-gradient(var(--border-strong) 1px, transparent 1px);
-  background-size: 24px 24px;
-  opacity: 0.25;
-}
-
-:root[data-theme="light"] body::before {
-  opacity: 0.38;
 }
 
 code, kbd, pre, .font-mono {

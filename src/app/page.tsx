@@ -17,15 +17,15 @@ export const metadata: Metadata = {
 
 export default function HomePage(): React.JSX.Element {
   return (
-    <div className="landing-page">
+    <div className="landing-page min-h-screen flex flex-col overflow-x-hidden">
       <Navbar />
 
-      <main>
+      <main className="flex-1">
         {/* ─── HERO SECTION ────────────────────────────────────────── */}
-        <section className="relative py-14 sm:py-20 lg:py-26 pb-10 sm:pb-16 overflow-hidden max-w-[100vw]">
+        <section className="relative py-12 sm:py-20 lg:py-24 pb-8 sm:pb-14 overflow-hidden max-w-full">
           <div className="container relative z-10 flex flex-col items-center text-center">
             {/* Powerline Prompt Badge */}
-            <div className="mb-5 sm:mb-7 max-w-full">
+            <div className="mb-4 sm:mb-6 max-w-full overflow-hidden">
               <div className="powerline-prompt">
                 <span className="powerline-seg powerline-seg-user">arch</span>
                 <span className="powerline-arrow-1" />
@@ -38,8 +38,8 @@ export default function HomePage(): React.JSX.Element {
             </div>
 
             {/* Hero Main Typography */}
-            <h1 className="font-brand tracking-tight mb-4 sm:mb-6 max-w-[920px]">
-              <span className="block text-[clamp(2.7rem,8.5vw,6.4rem)] font-black leading-none tracking-tight">
+            <h1 className="font-brand tracking-tight mb-3 sm:mb-5 max-w-[920px]">
+              <span className="block text-[clamp(2.4rem,8.5vw,6.2rem)] font-black leading-none tracking-tight">
                 <span className="text-text-primary">vibe</span>
                 <span className="bg-gradient-to-r from-sage via-green to-amber bg-clip-text text-transparent">
                   -fi
@@ -47,15 +47,15 @@ export default function HomePage(): React.JSX.Element {
               </span>
             </h1>
 
-            <p className="text-[0.98rem] sm:text-xl text-text-secondary max-w-[600px] leading-relaxed mb-8 sm:mb-12 px-2">
+            <p className="text-[0.95rem] sm:text-xl text-text-secondary max-w-[600px] leading-relaxed mb-6 sm:mb-10 px-2">
               A fast, lightweight terminal music player. Stream YouTube music with live visualizers and synced lyrics.
             </p>
 
             {/* Hero CTA Actions */}
-            <div className="flex flex-row items-center justify-center gap-3 sm:gap-4 w-full max-w-xs sm:max-w-none mx-auto mb-10 sm:mb-16">
+            <div className="flex flex-row items-center justify-center gap-2.5 sm:gap-4 w-full max-w-xs sm:max-w-none mx-auto mb-8 sm:mb-14 px-2">
               <a
                 href="#install"
-                className="btn btn-primary px-4 sm:px-6 py-2.5 sm:py-3 text-[0.86rem] sm:text-[0.95rem] whitespace-nowrap justify-center shadow-md flex-1 sm:flex-initial"
+                className="btn btn-primary px-3.5 sm:px-6 py-2.5 sm:py-3 text-[0.84rem] sm:text-[0.95rem] whitespace-nowrap justify-center shadow-md flex-1 sm:flex-initial"
               >
                 <span>Quick Install</span>
                 <span aria-hidden="true">→</span>
@@ -65,9 +65,9 @@ export default function HomePage(): React.JSX.Element {
                 href="https://github.com/Swadesh-c0de/vibe-fi-go"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="btn btn-secondary px-4 sm:px-6 py-2.5 sm:py-3 text-[0.86rem] sm:text-[0.95rem] whitespace-nowrap justify-center flex-1 sm:flex-initial"
+                className="btn btn-secondary px-3.5 sm:px-6 py-2.5 sm:py-3 text-[0.84rem] sm:text-[0.95rem] whitespace-nowrap justify-center flex-1 sm:flex-initial"
               >
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" className="shrink-0">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" className="shrink-0" aria-hidden="true">
                   <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z" />
                 </svg>
                 <span>GitHub</span>
@@ -84,7 +84,7 @@ export default function HomePage(): React.JSX.Element {
         {/* ─── LIVE SPECS & STATS STRIP ───────────────────────────── */}
         <section className="border-y border-dashed border-subtle py-3.5 sm:py-4.5 bg-surface/20">
           <div className="container max-w-[960px]">
-            <div className="flex items-center justify-center gap-x-3.5 sm:gap-x-5 gap-y-2 flex-wrap text-[0.76rem] sm:text-[0.82rem] font-mono text-text-muted">
+            <div className="flex items-center justify-center gap-x-3 sm:gap-x-5 gap-y-2 flex-wrap text-[0.76rem] sm:text-[0.82rem] font-mono text-text-muted">
               <span className="text-text-secondary font-medium">
                 Linux &amp; macOS
               </span>
@@ -117,7 +117,7 @@ export default function HomePage(): React.JSX.Element {
         </section>
 
         {/* ─── QUICK INSTALL WIDGET ───────────────────────────────── */}
-        <section className="py-14 sm:py-20 lg:py-24" id="install">
+        <section className="py-12 sm:py-18 lg:py-22" id="install">
           <div className="container">
             <div className="max-w-[860px] mx-auto mb-4 sm:mb-6 flex flex-col sm:flex-row sm:items-baseline justify-between gap-1.5 px-1">
               <h2 className="font-brand text-[clamp(1.5rem,4vw,2.25rem)] font-extrabold text-text-primary tracking-tight">

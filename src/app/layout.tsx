@@ -123,10 +123,12 @@ export default function RootLayout({
               (function() {
                 try {
                   var saved = localStorage.getItem('vibefi_theme');
-                  if (saved === 'light' || saved === 'dark') {
-                    document.documentElement.setAttribute('data-theme', saved);
-                  } else {
-                    document.documentElement.setAttribute('data-theme', 'dark');
+                  var theme = (saved === 'light' || saved === 'dark') ? saved : 'dark';
+                  document.documentElement.setAttribute('data-theme', theme);
+                  var color = theme === 'light' ? '#fbf1c7' : '#141617';
+                  var meta = document.querySelector('meta[name="theme-color"]');
+                  if (meta) {
+                    meta.setAttribute('content', color);
                   }
                 } catch (e) {}
               })();

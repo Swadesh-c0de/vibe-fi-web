@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import React, { useState } from "react";
+import { copyToClipboard } from "@/lib/clipboard";
 
 export interface InstallOption {
   id: string;
@@ -76,39 +77,13 @@ export default function InstallWidget(): React.JSX.Element {
   const activeTab = selectedTab;
   const currentOption = INSTALL_OPTIONS.find((opt) => opt.id === activeTab) || INSTALL_OPTIONS[0];
 
-  const handleCopy = (e?: React.MouseEvent): void => {
+  const handleCopy = async (e?: React.MouseEvent): Promise<void> => {
     if (e && e.stopPropagation) e.stopPropagation();
-    const textToCopy = currentOption.command;
-
-    const fallbackCopy = (): void => {
-      try {
-        const textarea = document.createElement("textarea");
-        textarea.value = textToCopy;
-        textarea.setAttribute("readonly", "");
-        textarea.style.position = "fixed";
-        textarea.style.left = "-9999px";
-        textarea.style.top = "-9999px";
-        document.body.appendChild(textarea);
-        textarea.focus();
-        textarea.select();
-        document.execCommand("copy");
-        document.body.removeChild(textarea);
-      } catch {
-        // Fallback suppressed
-      }
-    };
-
-    try {
-      if (navigator.clipboard && navigator.clipboard.writeText) {
-        navigator.clipboard.writeText(textToCopy).catch(fallbackCopy);
-      } else {
-        fallbackCopy();
-      }
-    } catch {
-      fallbackCopy();
+    const success = await copyToClipboard(currentOption.command);
+    if (success) {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
     }
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
   };
 
   return (
@@ -198,17 +173,30 @@ export default function InstallWidget(): React.JSX.Element {
       </div>
 
       {/* Lightweight Note & Documentation Link Footer */}
-      <div className="px-3 sm:px-5.5 py-2.5 sm:py-3 bg-surface-elevated/25 border-t border-subtle flex items-center justify-between gap-3 text-[0.76rem] sm:text-[0.82rem]">
+      <div className="px-3 sm:px-5.5 py-2.5 sm:py-3 bg-surface-elevated/25 border-t border-subtle flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 sm:gap-3 text-[0.76rem] sm:text-[0.82rem]">
         <p className="text-text-secondary leading-relaxed min-w-0 flex-1">
           {currentOption.note}
         </p>
-        <Link
-          href="/docs/installation"
-          className="text-sage hover:text-text-primary font-semibold whitespace-nowrap inline-flex items-center gap-1.5 transition-colors shrink-0 group/guide"
-        >
-          <span>Full guide</span>
-          <span aria-hidden="true" className="transition-transform group-hover/guide:translate-x-0.5">→</span>
-        </Link>
+        <div className="flex items-center gap-3 shrink-0">
+          <a
+            href="https://github.com/Swadesh-c0de/vibe-fi-go/blob/main/install.sh"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-text-muted hover:text-text-primary transition-colors whitespace-nowrap inline-flex items-center gap-1 font-mono text-[0.72rem] sm:text-[0.78rem]"
+            title="Inspect install.sh on GitHub"
+          >
+            <span>inspect install.sh</span>
+            <span aria-hidden="true" className="text-[11px]">↗</span>
+          </a>
+          <span className="text-border-subtle" aria-hidden="true">·</span>
+          <Link
+            href="/docs/installation"
+            className="text-sage hover:text-text-primary font-semibold whitespace-nowrap inline-flex items-center gap-1.5 transition-colors group/guide"
+          >
+            <span>Full guide</span>
+            <span aria-hidden="true" className="transition-transform group-hover/guide:translate-x-0.5">→</span>
+          </Link>
+        </div>
       </div>
     </div>
   );

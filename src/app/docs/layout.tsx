@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useSyncExternalStore } from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 
@@ -40,12 +40,38 @@ const DOCS_NAV: DocsNavGroup[] = [
   },
 ];
 
+const PRIMARY_PAGES = [
+  { href: "/docs", label: "Overview", desc: "Introduction and feature highlights" },
+  { href: "/docs/installation", label: "Installation Guide", desc: "Binary, curl, package managers & source" },
+  { href: "/docs/usage", label: "Usage & Shortcuts", desc: "Playback, visualizers, lyrics, and desktop MPRIS" },
+  { href: "/docs/hotkeys", label: "Hotkeys Cheatsheet", desc: "Complete keyboard shortcut reference" },
+];
+
+function subscribeToHash(callback: () => void): () => void {
+  window.addEventListener("hashchange", callback);
+  window.addEventListener("popstate", callback);
+  return () => {
+    window.removeEventListener("hashchange", callback);
+    window.removeEventListener("popstate", callback);
+  };
+}
+
+function getHashSnapshot(): string {
+  return window.location.hash;
+}
+
+function getHashServerSnapshot(): string {
+  return "";
+}
+
 function DocsNavList({
   pathname,
+  hash,
   onNavigate,
   isMobile,
 }: {
   pathname: string;
+  hash: string;
   onNavigate?: () => void;
   isMobile?: boolean;
 }): React.JSX.Element {
@@ -64,7 +90,12 @@ function DocsNavList({
           </span>
           <ul className={`list-none flex flex-col p-0 m-0 ${isMobile ? "gap-1" : "gap-1.5"}`}>
             {group.links.map((link) => {
-              const isActive = pathname === link.href;
+              const hasHash = link.href.includes("#");
+              const currentFullPath = hash ? `${pathname}${hash}` : pathname;
+              const isActive = hasHash
+                ? link.href === currentFullPath
+                : link.href === pathname && (!hash || hash === "#");
+
               return (
                 <li key={link.href}>
                   <Link
@@ -103,15 +134,40 @@ export default function DocsLayout({
   children: React.ReactNode;
 }): React.JSX.Element {
   const pathname = usePathname();
+  const hash = useSyncExternalStore(subscribeToHash, getHashSnapshot, getHashServerSnapshot);
   const [mobileDocsOpen, setMobileDocsOpen] = useState<boolean>(false);
 
   useEffect(() => {
-    const handlePopState = (): void => setMobileDocsOpen(false);
+    const handlePopState = (): void => {
+      setMobileDocsOpen(false);
+    };
+
     window.addEventListener("popstate", handlePopState);
-    return () => window.removeEventListener("popstate", handlePopState);
+    return () => {
+      window.removeEventListener("popstate", handlePopState);
+    };
   }, []);
 
-  const activeLink = DOCS_NAV.flatMap((g) => g.links).find((l) => l.href === pathname);
+  const handleNavigate = (): void => {
+    setMobileDocsOpen(false);
+  };
+
+  const currentFullPath = hash ? `${pathname}${hash}` : pathname;
+  const activeLink =
+    DOCS_NAV.flatMap((g) => g.links).find((l) => {
+      if (l.href.includes("#")) {
+        return l.href === currentFullPath;
+      }
+      return l.href === pathname && (!hash || hash === "#");
+    }) ||
+    DOCS_NAV.flatMap((g) => g.links).find((l) => l.href === pathname);
+
+  const currentIndex = PRIMARY_PAGES.findIndex((page) => page.href === pathname);
+  const prevPage = currentIndex > 0 ? PRIMARY_PAGES[currentIndex - 1] : null;
+  const nextPage =
+    currentIndex >= 0 && currentIndex < PRIMARY_PAGES.length - 1
+      ? PRIMARY_PAGES[currentIndex + 1]
+      : null;
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -169,7 +225,8 @@ export default function DocsLayout({
                 </div>
                 <DocsNavList
                   pathname={pathname}
-                  onNavigate={() => setMobileDocsOpen(false)}
+                  hash={hash}
+                  onNavigate={handleNavigate}
                   isMobile
                 />
                 <div className="pt-2 border-t border-subtle/50 text-center">
@@ -197,7 +254,7 @@ export default function DocsLayout({
               </span>
             </div>
 
-            <DocsNavList pathname={pathname} />
+            <DocsNavList pathname={pathname} hash={hash} onNavigate={handleNavigate} />
 
             <div className="pt-4.5 border-t border-subtle">
               <a
@@ -215,7 +272,55 @@ export default function DocsLayout({
 
         {/* Main Documentation Article Content */}
         <main className="flex-1 min-w-0">
-          <article className="docs-article max-w-[840px] w-full min-w-0">{children}</article>
+          <article className="docs-article max-w-[840px] w-full min-w-0">
+            {children}
+
+            {/* Previous / Next Page Navigation Footer */}
+            {currentIndex !== -1 && (prevPage || nextPage) && (
+              <nav
+                className="mt-12 sm:mt-16 pt-8 border-t border-subtle grid grid-cols-1 sm:grid-cols-2 gap-4"
+                aria-label="Documentation Pagination"
+              >
+                {prevPage ? (
+                  <Link
+                    href={prevPage.href}
+                    className="group flex flex-col justify-between bg-surface border border-subtle hover:border-sage rounded-[6px] p-4 transition-all duration-150 shadow-xs hover:shadow-sm"
+                  >
+                    <span className="font-mono text-[0.72rem] text-text-muted flex items-center gap-1 mb-1.5">
+                      <span aria-hidden="true">←</span>
+                      <span>Previous</span>
+                    </span>
+                    <span className="font-brand font-bold text-[0.98rem] text-text-primary group-hover:text-sage transition-colors">
+                      {prevPage.label}
+                    </span>
+                    <span className="text-[0.78rem] text-text-secondary mt-1 line-clamp-1">
+                      {prevPage.desc}
+                    </span>
+                  </Link>
+                ) : (
+                  <div className="hidden sm:block" />
+                )}
+
+                {nextPage && (
+                  <Link
+                    href={nextPage.href}
+                    className="group flex flex-col justify-between text-left sm:text-right bg-surface border border-subtle hover:border-sage rounded-[6px] p-4 transition-all duration-150 shadow-xs hover:shadow-sm"
+                  >
+                    <span className="font-mono text-[0.72rem] text-text-muted flex items-center sm:justify-end gap-1 mb-1.5">
+                      <span>Next</span>
+                      <span aria-hidden="true">→</span>
+                    </span>
+                    <span className="font-brand font-bold text-[0.98rem] text-text-primary group-hover:text-sage transition-colors">
+                      {nextPage.label}
+                    </span>
+                    <span className="text-[0.78rem] text-text-secondary mt-1 line-clamp-1">
+                      {nextPage.desc}
+                    </span>
+                  </Link>
+                )}
+              </nav>
+            )}
+          </article>
         </main>
       </div>
 

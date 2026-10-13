@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo, useRef } from "react";
 import Link from "next/link";
 
 interface ShortcutItem {
@@ -200,6 +200,7 @@ for (const group of SHORTCUT_GROUPS) {
 export default function HotkeysSection(): React.JSX.Element {
   const [activeTab, setActiveTab] = useState<string>("all");
   const [activeShortcutId, setActiveShortcutId] = useState<string | null>(null);
+  const sectionRef = useRef<HTMLElement>(null);
 
   // Live keyboard testing (active only on devices with physical keyboard/pointer)
   useEffect(() => {
@@ -210,20 +211,39 @@ export default function HotkeysSection(): React.JSX.Element {
     let timeoutId: NodeJS.Timeout;
 
     const handleKeyDown = (e: KeyboardEvent) => {
-      // Ignore if typing in an input
+      // Ignore modifier key combos (Ctrl+C, Cmd+R, Alt+Tab, etc.)
+      if (e.ctrlKey || e.metaKey || e.altKey) {
+        return;
+      }
+
+      // Ignore if typing in an input, textarea, select, or focused on an interactive button/link
       const target = e.target as HTMLElement | null;
       if (
         target &&
         (target.tagName === "INPUT" ||
           target.tagName === "TEXTAREA" ||
+          target.tagName === "SELECT" ||
+          target.tagName === "BUTTON" ||
+          target.tagName === "A" ||
           target.isContentEditable)
       ) {
         return;
       }
 
+      // Only respond when #hotkeys is currently visible in the viewport
+      const rect = sectionRef.current?.getBoundingClientRect();
+      const isSectionInView =
+        rect &&
+        rect.top < window.innerHeight * 0.85 &&
+        rect.bottom > window.innerHeight * 0.15;
+
+      if (!isSectionInView) {
+        return;
+      }
+
       const shortcutId = KEY_TO_SHORTCUT_MAP.get(e.key.toLowerCase());
       if (shortcutId) {
-        if (e.key === " ") {
+        if (e.key === " " || e.key === "Space") {
           e.preventDefault();
         }
         setActiveShortcutId(shortcutId);
@@ -247,7 +267,7 @@ export default function HotkeysSection(): React.JSX.Element {
   );
 
   return (
-    <section className="py-14 sm:py-20 lg:py-24" id="hotkeys">
+    <section ref={sectionRef} className="py-14 sm:py-20 lg:py-24" id="hotkeys">
       <div className="container max-w-[1040px]">
         {/* Clean, Compact Section Header */}
         <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-1.5 sm:gap-4 border-b border-dashed border-subtle pb-3.5 mb-6 sm:mb-8">

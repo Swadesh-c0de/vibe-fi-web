@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useRef, useEffect } from "react";
+import { copyToClipboard } from "@/lib/clipboard";
 
 export interface WorkflowCategory {
   id: string;
@@ -120,6 +121,53 @@ export default function CliWorkflows(): React.JSX.Element {
   const [activeCategory, setActiveCategory] = useState<string>("all");
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState<string>("");
+  const [isSearchFocused, setIsSearchFocused] = useState<boolean>(false);
+
+  const sectionRef = useRef<HTMLElement>(null);
+  const searchInputRef = useRef<HTMLInputElement>(null);
+
+  // Focus search bar with "/" when section is in view, and blur/clear on Escape
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.ctrlKey || e.metaKey || e.altKey) return;
+      const target = e.target as HTMLElement | null;
+
+      if (e.key === "Escape") {
+        if (document.activeElement === searchInputRef.current) {
+          searchInputRef.current?.blur();
+        } else if (searchQuery) {
+          setSearchQuery("");
+        }
+        return;
+      }
+
+      if (
+        target &&
+        (target.tagName === "INPUT" ||
+          target.tagName === "TEXTAREA" ||
+          target.tagName === "SELECT" ||
+          target.isContentEditable)
+      ) {
+        return;
+      }
+
+      const rect = sectionRef.current?.getBoundingClientRect();
+      const isCliInView =
+        rect &&
+        rect.top < window.innerHeight * 0.85 &&
+        rect.bottom > window.innerHeight * 0.15;
+
+      if (!isCliInView) return;
+
+      if (e.key === "/") {
+        e.preventDefault();
+        searchInputRef.current?.focus();
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [searchQuery]);
 
   const filteredCommands = useMemo(() => {
     const q = searchQuery.trim().toLowerCase();
@@ -138,42 +186,18 @@ export default function CliWorkflows(): React.JSX.Element {
     });
   }, [activeCategory, searchQuery]);
 
-  const handleCopy = (id: string, text: string): void => {
-    const fallbackCopy = (): void => {
-      try {
-        const textarea = document.createElement("textarea");
-        textarea.value = text;
-        textarea.setAttribute("readonly", "");
-        textarea.style.position = "fixed";
-        textarea.style.left = "-9999px";
-        textarea.style.top = "-9999px";
-        document.body.appendChild(textarea);
-        textarea.focus();
-        textarea.select();
-        document.execCommand("copy");
-        document.body.removeChild(textarea);
-      } catch {
-        // Fallback suppressed
-      }
-    };
-
-    try {
-      if (navigator.clipboard && navigator.clipboard.writeText) {
-        navigator.clipboard.writeText(text).catch(fallbackCopy);
-      } else {
-        fallbackCopy();
-      }
-    } catch {
-      fallbackCopy();
+  const handleCopy = async (id: string, text: string): Promise<void> => {
+    const success = await copyToClipboard(text);
+    if (success) {
+      setCopiedId(id);
+      setTimeout(() => {
+        setCopiedId(null);
+      }, 2000);
     }
-    setCopiedId(id);
-    setTimeout(() => {
-      setCopiedId(null);
-    }, 2000);
   };
 
   return (
-    <section className="py-14 sm:py-20 lg:py-24 relative" id="cli">
+    <section ref={sectionRef} className="py-14 sm:py-20 lg:py-24 relative" id="cli">
       <div className="container">
         {/* Clean, Compact Section Header */}
         <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-1.5 sm:gap-4 border-b border-dashed border-subtle pb-3.5 mb-6 sm:mb-8">
@@ -219,17 +243,28 @@ export default function CliWorkflows(): React.JSX.Element {
               <line x1="21" y1="21" x2="16.65" y2="16.65" />
             </svg>
             <input
+              ref={searchInputRef}
               type="text"
               placeholder="Search command (e.g. restore, waybar, flac)..."
               value={searchQuery}
+              onFocus={() => setIsSearchFocused(true)}
+              onBlur={() => setIsSearchFocused(false)}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-9 pr-8 py-2 sm:py-2.5 bg-surface border border-subtle sm:border-strong rounded-[6px] font-sans text-[0.84rem] sm:text-[0.9rem] text-text-primary outline-none focus:border-sage placeholder:text-text-muted transition-colors"
+              className="w-full pl-9 pr-9 py-2 sm:py-2.5 bg-surface border border-subtle sm:border-strong rounded-[6px] font-sans text-[0.84rem] sm:text-[0.9rem] text-text-primary outline-none focus:border-sage placeholder:text-text-muted transition-colors"
             />
+            {!searchQuery && !isSearchFocused && (
+              <kbd className="absolute right-2.5 px-1.5 py-0.5 font-mono text-[11px] text-text-muted bg-surface-elevated border border-strong rounded shadow-xs pointer-events-none select-none">
+                /
+              </kbd>
+            )}
             {searchQuery && (
               <button
                 type="button"
-                onClick={() => setSearchQuery("")}
-                className="absolute right-2.5 text-text-muted hover:text-text-primary text-[0.85rem] px-1.5 py-0.5"
+                onClick={() => {
+                  setSearchQuery("");
+                  searchInputRef.current?.focus();
+                }}
+                className="absolute right-2.5 text-text-muted hover:text-text-primary text-[0.85rem] px-1.5 py-0.5 cursor-pointer"
                 aria-label="Clear search"
               >
                 ✕
