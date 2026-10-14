@@ -305,7 +305,7 @@ export default function CliWorkflows(): React.JSX.Element {
               <div
                 key={cmd.id}
                 style={{ "--idx": idx } as React.CSSProperties}
-                className="reveal-card bg-surface border border-subtle rounded-[6px] p-4.5 sm:p-6 lg:p-7 flex flex-col justify-between gap-3.5 sm:gap-5 transition-colors duration-150 min-w-0 max-w-full hover:border-strong md:hover:-translate-y-0.5 shadow-xs"
+                className="reveal-card bg-surface border border-subtle rounded-[6px] p-4.5 sm:p-6 lg:p-7 flex flex-col justify-between gap-3.5 sm:gap-5 transition-[border-color,transform] duration-150 min-w-0 max-w-full hover:border-strong md:hover:-translate-y-0.5 shadow-xs"
               >
                 <div>
                   <div className="flex items-center justify-between mb-2 sm:mb-2.5">

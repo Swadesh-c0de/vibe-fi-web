@@ -202,14 +202,33 @@ export default function HotkeysSection(): React.JSX.Element {
   const [activeTab, setActiveTab] = useState<string>("all");
   const [activeShortcutId, setActiveShortcutId] = useState<string | null>(null);
   const { ref: sectionRef, isInView } = useInView<HTMLElement>();
+  const highlightTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const triggerHighlight = (id: string, duration = 1100): void => {
+    if (highlightTimeoutRef.current) {
+      clearTimeout(highlightTimeoutRef.current);
+    }
+    setActiveShortcutId(id);
+    highlightTimeoutRef.current = setTimeout(() => {
+      setActiveShortcutId(null);
+      highlightTimeoutRef.current = null;
+    }, duration);
+  };
+
+  // Clean up timer on unmount
+  useEffect(() => {
+    return () => {
+      if (highlightTimeoutRef.current) {
+        clearTimeout(highlightTimeoutRef.current);
+      }
+    };
+  }, []);
 
   // Live keyboard testing (active only on devices with physical keyboard/pointer)
   useEffect(() => {
     if (typeof window !== "undefined" && window.matchMedia && !window.matchMedia("(hover: hover)").matches) {
       return;
     }
-
-    let timeoutId: NodeJS.Timeout;
 
     const handleKeyDown = (e: KeyboardEvent) => {
       // Ignore modifier key combos (Ctrl+C, Cmd+R, Alt+Tab, etc.)
@@ -247,18 +266,13 @@ export default function HotkeysSection(): React.JSX.Element {
         if (e.key === " " || e.key === "Space") {
           e.preventDefault();
         }
-        setActiveShortcutId(shortcutId);
-        clearTimeout(timeoutId);
-        timeoutId = setTimeout(() => {
-          setActiveShortcutId(null);
-        }, 1200);
+        triggerHighlight(shortcutId, 1200);
       }
     };
 
     window.addEventListener("keydown", handleKeyDown);
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
-      clearTimeout(timeoutId);
     };
   }, [sectionRef]);
 
@@ -349,10 +363,7 @@ export default function HotkeysSection(): React.JSX.Element {
                   return (
                     <div
                       key={item.id}
-                      onClick={() => {
-                        setActiveShortcutId(item.id);
-                        setTimeout(() => setActiveShortcutId(null), 1000);
-                      }}
+                      onClick={() => triggerHighlight(item.id, 1000)}
                       className={`flex items-center justify-between py-2 sm:py-2.5 px-2 sm:px-2.5 -mx-1 rounded-[6px] transition-colors duration-150 cursor-pointer ${
                         isActive
                           ? "bg-surface-elevated ring-1"

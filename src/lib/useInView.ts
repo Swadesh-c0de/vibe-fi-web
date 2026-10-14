@@ -8,11 +8,6 @@ export interface UseInViewOptions {
   triggerOnce?: boolean;
 }
 
-/**
- * Lightweight IntersectionObserver hook for hardware-accelerated scroll reveal.
- * Disconnects observer once the element enters viewport to minimize CPU overhead.
- * Safe for mobile devices, momentum scrolling, and fast swipe flings.
- */
 export function useInView<T extends HTMLElement = HTMLElement>(
   options: UseInViewOptions = {}
 ): {
@@ -21,21 +16,23 @@ export function useInView<T extends HTMLElement = HTMLElement>(
 } {
   const { threshold = 0, rootMargin = "250px 0px 150px 0px", triggerOnce = true } = options;
   const ref = useRef<T | null>(null);
-  const [isInView, setIsInView] = useState<boolean>(() => {
-    // If running in an environment without IntersectionObserver, or on small mobile screens, default to visible
-    if (typeof window === "undefined") return false;
-    return typeof IntersectionObserver === "undefined" || window.innerWidth <= 768;
-  });
+  const [isInView, setIsInView] = useState<boolean>(false);
 
   useEffect(() => {
-    if (typeof IntersectionObserver === "undefined" || (window.innerWidth <= 768 && isInView)) {
-      return;
-    }
-
     const element = ref.current;
     if (!element) return;
 
     let isSubscribed = true;
+
+    if (typeof IntersectionObserver === "undefined" || window.innerWidth <= 768) {
+      const rafId = requestAnimationFrame(() => {
+        if (isSubscribed) setIsInView(true);
+      });
+      return () => {
+        isSubscribed = false;
+        cancelAnimationFrame(rafId);
+      };
+    }
 
     const observer = new IntersectionObserver(
       (entries) => {
@@ -56,7 +53,6 @@ export function useInView<T extends HTMLElement = HTMLElement>(
 
     observer.observe(element);
 
-    // Initial check within next animation frame to prevent synchronous setState in effect
     const rafId = requestAnimationFrame(() => {
       if (!isSubscribed || !element) return;
       const rect = element.getBoundingClientRect();
@@ -74,7 +70,7 @@ export function useInView<T extends HTMLElement = HTMLElement>(
       cancelAnimationFrame(rafId);
       observer.disconnect();
     };
-  }, [threshold, rootMargin, triggerOnce, isInView]);
+  }, [threshold, rootMargin, triggerOnce]);
 
   return { ref, isInView };
 }

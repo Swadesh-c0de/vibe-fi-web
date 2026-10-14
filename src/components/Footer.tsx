@@ -7,7 +7,7 @@ export default function Footer(): React.JSX.Element {
       <div className="container">
         <div className="flex flex-col md:flex-row justify-between flex-wrap gap-8 md:gap-16 mb-10 md:mb-16">
           <div className="w-full md:max-w-[360px] min-w-0">
-            <div className="flex items-center gap-3 mb-3.5 sm:mb-4.5">
+            <Link href="/" className="inline-flex items-center gap-3 mb-3.5 sm:mb-4.5 group footer-logo">
               <svg width="28" height="28" viewBox="0 0 36 36" fill="none">
                 <rect width="36" height="36" rx="9" className="logo-squircle-bg" />
                 <rect x="6.5" y="14" width="4" height="14" rx="2" fill="#7daea3" className="logo-bar logo-bar-1" />
@@ -19,7 +19,7 @@ export default function Footer(): React.JSX.Element {
                 <span className="text-text-primary">vibe</span>
                 <span className="text-sage">-fi</span>
               </span>
-            </div>
+            </Link>
             <p className="text-[0.88rem] sm:text-[0.92rem] text-text-secondary leading-relaxed mb-5 sm:mb-6">
               Free, open-source terminal music player for Linux &amp; macOS. Built with Go, Bubble Tea, Lip Gloss, and libmpv.
             </p>
