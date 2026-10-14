@@ -223,6 +223,12 @@ html.disable-transitions *::after {
   }
 }
 
+@media (min-width: 1536px) {
+  .container {
+    max-width: 1240px;
+  }
+}
+
 /* ─── BUTTONS ─────────────────────────────────────────────────────── */
 .btn {
   display: inline-flex;
@@ -869,5 +875,162 @@ nextjs-portal,
     border-top-width: 9.5px;
     border-bottom-width: 9.5px;
     border-left-width: 5px;
+  }
+}
+
+/* ─── HARDWARE-ACCELERATED ANIMATIONS & SCROLL REVEAL ────────────── */
+@keyframes vibe-fade-up {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 14px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes vibe-scale-up {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 18px, 0) scale(0.985);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+}
+
+@keyframes tab-fade-in {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 6px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+.animate-onload {
+  animation: vibe-fade-up 520ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation-delay: calc(var(--stagger, 0) * 75ms);
+  will-change: opacity, transform;
+}
+
+.animate-onload-scale {
+  animation: vibe-scale-up 600ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation-delay: calc(var(--stagger, 0) * 75ms);
+  will-change: opacity, transform;
+}
+
+.tab-fade-in {
+  animation: tab-fade-in 180ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  will-change: opacity, transform;
+}
+
+/* Mobile viewports (<= 768px): cards & sections are always visible immediately without delay */
+@media (max-width: 768px) {
+  .reveal-section,
+  .reveal-card {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+    will-change: auto !important;
+  }
+}
+
+/* Tablet & Desktop viewports (> 768px): hardware-accelerated scroll reveal */
+@media (min-width: 769px) {
+  .reveal-section {
+    opacity: 0;
+    transform: translate3d(0, 14px, 0);
+    transition: opacity 480ms cubic-bezier(0.16, 1, 0.3, 1),
+                transform 480ms cubic-bezier(0.16, 1, 0.3, 1);
+    transition-delay: calc(var(--idx, 0) * 40ms);
+    will-change: opacity, transform;
+  }
+
+  [data-visible="true"] .reveal-section,
+  [data-visible="true"].reveal-section {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+
+  .reveal-card {
+    opacity: 0;
+    transform: translate3d(0, 14px, 0);
+    transition: opacity 440ms cubic-bezier(0.16, 1, 0.3, 1),
+                transform 440ms cubic-bezier(0.16, 1, 0.3, 1);
+    transition-delay: calc(min(var(--idx, 0), 6) * 40ms);
+    will-change: opacity, transform;
+  }
+
+  [data-visible="true"] .reveal-card,
+  [data-visible="true"].reveal-card {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+.mobile-menu-drawer {
+  animation: vibe-fade-up 240ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* ─── EQUALIZER LOGO MICRO-ANIMATION ─────────────────────────────── */
+@keyframes eq-pulse {
+  0% {
+    transform: scaleY(1);
+  }
+  30% {
+    transform: scaleY(0.55);
+  }
+  65% {
+    transform: scaleY(1.08);
+  }
+  100% {
+    transform: scaleY(1);
+  }
+}
+
+.logo-bar {
+  transform-box: fill-box;
+  transform-origin: bottom;
+  animation: eq-pulse 900ms ease-out both;
+  will-change: transform;
+}
+
+.logo-bar-1 { animation-delay: 0ms; }
+.logo-bar-2 { animation-delay: 100ms; }
+.logo-bar-3 { animation-delay: 200ms; }
+.logo-bar-4 { animation-delay: 300ms; }
+
+@media (hover: hover) {
+  a:hover .logo-bar {
+    animation: eq-pulse 900ms ease-out both;
+  }
+  a:hover .logo-bar-1 { animation-delay: 0ms; }
+  a:hover .logo-bar-2 { animation-delay: 100ms; }
+  a:hover .logo-bar-3 { animation-delay: 200ms; }
+  a:hover .logo-bar-4 { animation-delay: 300ms; }
+}
+
+/* Strict reduced motion accessibility */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto !important;
+  }
+
+  .animate-onload,
+  .animate-onload-scale,
+  .reveal-section,
+  .reveal-card,
+  .logo-bar,
+  .tab-fade-in,
+  .mobile-menu-drawer {
+    animation: none !important;
+    transition: none !important;
+    opacity: 1 !important;
+    transform: none !important;
   }
 }

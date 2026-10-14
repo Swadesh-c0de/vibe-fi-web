@@ -17,7 +17,7 @@ export const metadata: Metadata = {
 
 export default function HomePage(): React.JSX.Element {
   return (
-    <div className="landing-page min-h-screen flex flex-col overflow-x-hidden">
+    <div className="landing-page min-h-screen flex flex-col">
       <Navbar />
 
       <main className="flex-1">
@@ -25,7 +25,10 @@ export default function HomePage(): React.JSX.Element {
         <section className="relative py-12 sm:py-20 lg:py-24 pb-8 sm:pb-14 overflow-hidden max-w-full">
           <div className="container relative z-10 flex flex-col items-center text-center">
             {/* Powerline Prompt Badge */}
-            <div className="mb-4 sm:mb-6 max-w-full overflow-hidden">
+            <div
+              className="mb-4 sm:mb-6 max-w-full overflow-hidden animate-onload"
+              style={{ "--stagger": 0 } as React.CSSProperties}
+            >
               <div className="powerline-prompt">
                 <span className="powerline-seg powerline-seg-user">arch</span>
                 <span className="powerline-arrow-1" />
@@ -38,7 +41,10 @@ export default function HomePage(): React.JSX.Element {
             </div>
 
             {/* Hero Main Typography */}
-            <h1 className="font-brand tracking-tight mb-3 sm:mb-5 max-w-[920px]">
+            <h1
+              className="font-brand tracking-tight mb-3 sm:mb-5 max-w-[920px] animate-onload"
+              style={{ "--stagger": 1 } as React.CSSProperties}
+            >
               <span className="block text-[clamp(2.4rem,8.5vw,6.2rem)] font-black leading-none tracking-tight">
                 <span className="text-text-primary">vibe</span>
                 <span className="bg-gradient-to-r from-sage via-green to-amber bg-clip-text text-transparent">
@@ -47,12 +53,18 @@ export default function HomePage(): React.JSX.Element {
               </span>
             </h1>
 
-            <p className="text-[0.95rem] sm:text-xl text-text-secondary max-w-[600px] leading-relaxed mb-6 sm:mb-10 px-2">
+            <p
+              className="text-[0.95rem] sm:text-xl text-text-secondary max-w-[600px] leading-relaxed mb-6 sm:mb-10 px-2 animate-onload"
+              style={{ "--stagger": 2 } as React.CSSProperties}
+            >
               A fast, lightweight terminal music player. Stream YouTube music with live visualizers and synced lyrics.
             </p>
 
             {/* Hero CTA Actions */}
-            <div className="flex flex-row items-center justify-center gap-2.5 sm:gap-4 w-full max-w-xs sm:max-w-none mx-auto mb-8 sm:mb-14 px-2">
+            <div
+              className="flex flex-row items-center justify-center gap-2.5 sm:gap-4 w-full max-w-xs sm:max-w-none mx-auto mb-8 sm:mb-14 px-2 animate-onload"
+              style={{ "--stagger": 3 } as React.CSSProperties}
+            >
               <a
                 href="#install"
                 className="btn btn-primary px-3.5 sm:px-6 py-2.5 sm:py-3 text-[0.84rem] sm:text-[0.95rem] whitespace-nowrap justify-center shadow-md flex-1 sm:flex-initial"
@@ -75,7 +87,11 @@ export default function HomePage(): React.JSX.Element {
             </div>
 
             {/* Terminal Window Showcase */}
-            <div className="w-full max-w-[860px]" id="showcase">
+            <div
+              className="w-full max-w-[860px] xl:max-w-[960px] animate-onload-scale"
+              style={{ "--stagger": 4 } as React.CSSProperties}
+              id="showcase"
+            >
               <TerminalShowcase />
             </div>
           </div>
@@ -128,7 +144,10 @@ export default function HomePage(): React.JSX.Element {
               </span>
             </div>
 
-            <div className="max-w-[860px] mx-auto">
+            <div
+              className="max-w-[860px] mx-auto animate-onload"
+              style={{ "--stagger": 3 } as React.CSSProperties}
+            >
               <InstallWidget />
             </div>
           </div>

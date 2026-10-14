@@ -10,10 +10,10 @@ export default function Footer(): React.JSX.Element {
             <div className="flex items-center gap-3 mb-3.5 sm:mb-4.5">
               <svg width="28" height="28" viewBox="0 0 36 36" fill="none">
                 <rect width="36" height="36" rx="9" className="logo-squircle-bg" />
-                <rect x="6.5" y="14" width="4" height="14" rx="2" fill="#7daea3" />
-                <rect x="13.5" y="6" width="4" height="22" rx="2" fill="#d4be98" />
-                <rect x="20.5" y="11" width="4" height="17" rx="2" fill="#e78a4e" />
-                <rect x="27.5" y="18" width="4" height="10" rx="2" fill="#a9b665" />
+                <rect x="6.5" y="14" width="4" height="14" rx="2" fill="#7daea3" className="logo-bar logo-bar-1" />
+                <rect x="13.5" y="6" width="4" height="22" rx="2" fill="#d4be98" className="logo-bar logo-bar-2" />
+                <rect x="20.5" y="11" width="4" height="17" rx="2" fill="#e78a4e" className="logo-bar logo-bar-3" />
+                <rect x="27.5" y="18" width="4" height="10" rx="2" fill="#a9b665" className="logo-bar logo-bar-4" />
               </svg>
               <span className="font-brand font-black text-2xl tracking-tight leading-none">
                 <span className="text-text-primary">vibe</span>

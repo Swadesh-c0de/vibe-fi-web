@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useMemo, useRef } from "react";
 import Link from "next/link";
+import { useInView } from "@/lib/useInView";
 
 interface ShortcutItem {
   id: string;
@@ -95,7 +96,7 @@ const SHORTCUT_GROUPS: CategoryGroup[] = [
         keys: ["?", "F1"],
         label: "Help & Shortcuts",
         hint: "Open shortcuts cheat sheet",
-        triggerKeys: ["?", "F1", "/"],
+        triggerKeys: ["?", "F1"],
       },
       {
         id: "quit",
@@ -200,7 +201,7 @@ for (const group of SHORTCUT_GROUPS) {
 export default function HotkeysSection(): React.JSX.Element {
   const [activeTab, setActiveTab] = useState<string>("all");
   const [activeShortcutId, setActiveShortcutId] = useState<string | null>(null);
-  const sectionRef = useRef<HTMLElement>(null);
+  const { ref: sectionRef, isInView } = useInView<HTMLElement>();
 
   // Live keyboard testing (active only on devices with physical keyboard/pointer)
   useEffect(() => {
@@ -259,7 +260,7 @@ export default function HotkeysSection(): React.JSX.Element {
       window.removeEventListener("keydown", handleKeyDown);
       clearTimeout(timeoutId);
     };
-  }, []);
+  }, [sectionRef]);
 
   const visibleGroups = useMemo(
     () => SHORTCUT_GROUPS.filter((g) => activeTab === "all" || g.id === activeTab),
@@ -267,7 +268,12 @@ export default function HotkeysSection(): React.JSX.Element {
   );
 
   return (
-    <section ref={sectionRef} className="py-14 sm:py-20 lg:py-24" id="hotkeys">
+    <section
+      ref={sectionRef}
+      data-visible={isInView ? "true" : "false"}
+      className="py-14 sm:py-20 lg:py-24"
+      id="hotkeys"
+    >
       <div className="container max-w-[1040px]">
         {/* Clean, Compact Section Header */}
         <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-1.5 sm:gap-4 border-b border-dashed border-subtle pb-3.5 mb-6 sm:mb-8">
@@ -311,16 +317,18 @@ export default function HotkeysSection(): React.JSX.Element {
 
         {/* 2x2 Clean Grouped Deck */}
         <div
-          className={`grid gap-3.5 sm:gap-6 ${
+          key={activeTab}
+          className={`tab-fade-in grid gap-3.5 sm:gap-6 ${
             activeTab === "all"
               ? "grid-cols-1 md:grid-cols-2"
               : "grid-cols-1 max-w-[620px] mx-auto"
           }`}
         >
-          {visibleGroups.map((group) => (
+          {visibleGroups.map((group, idx) => (
             <div
               key={group.id}
-              className="bg-surface border border-subtle rounded-[6px] p-4.5 sm:p-6 transition-colors duration-150 shadow-xs"
+              style={{ "--idx": idx } as React.CSSProperties}
+              className="reveal-card bg-surface border border-subtle rounded-[6px] p-4.5 sm:p-6 transition-colors duration-150 shadow-xs"
             >
               {/* Category Header */}
               <div className="flex items-center justify-between pb-2.5 mb-2 border-b border-subtle">

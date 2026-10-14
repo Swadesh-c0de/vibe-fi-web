@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { copyToClipboard } from "@/lib/clipboard";
 
 export interface InstallOption {
@@ -73,27 +73,42 @@ const INSTALL_OPTIONS: InstallOption[] = [
 export default function InstallWidget(): React.JSX.Element {
   const [selectedTab, setSelectedTab] = useState<string>("auto");
   const [copied, setCopied] = useState<boolean>(false);
+  const copyTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const activeTab = selectedTab;
   const currentOption = INSTALL_OPTIONS.find((opt) => opt.id === activeTab) || INSTALL_OPTIONS[0];
+
+  useEffect(() => {
+    return () => {
+      if (copyTimeoutRef.current) {
+        clearTimeout(copyTimeoutRef.current);
+      }
+    };
+  }, []);
 
   const handleCopy = async (e?: React.MouseEvent): Promise<void> => {
     if (e && e.stopPropagation) e.stopPropagation();
     const success = await copyToClipboard(currentOption.command);
     if (success) {
+      if (copyTimeoutRef.current) {
+        clearTimeout(copyTimeoutRef.current);
+      }
       setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
+      copyTimeoutRef.current = setTimeout(() => {
+        setCopied(false);
+        copyTimeoutRef.current = null;
+      }, 2000);
     }
   };
 
   return (
     <div className="bg-surface border border-subtle sm:border-strong rounded-[6px] shadow-xs hover:border-strong transition-[border-color,box-shadow] duration-150 overflow-hidden">
-      {/* Sleek Segmented Tab Switcher */}
+      {/* Sleek Segmented Tab Switcher with small phone overflow safety */}
       <div
-        className="flex items-center px-3.5 sm:px-5 py-2.5 sm:py-3 border-b border-subtle bg-surface-elevated/30"
+        className="flex items-center px-3.5 sm:px-5 py-2.5 sm:py-3 border-b border-subtle bg-surface-elevated/30 overflow-x-auto scrollbar-none [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
         role="tablist"
       >
-        <div className="inline-flex items-center p-1 rounded-[6px] bg-surface-elevated/70 dark:bg-canvas/80 border border-subtle gap-1 max-w-full">
+        <div className="inline-flex items-center p-1 rounded-[6px] bg-surface-elevated/70 dark:bg-canvas/80 border border-subtle gap-1 max-w-full overflow-x-auto scrollbar-none">
           {INSTALL_OPTIONS.map((opt) => {
             const isActive = activeTab === opt.id;
             return (

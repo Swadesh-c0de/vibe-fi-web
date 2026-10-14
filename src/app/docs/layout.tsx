@@ -100,7 +100,14 @@ function DocsNavList({
                 <li key={link.href}>
                   <Link
                     href={link.href}
-                    onClick={onNavigate}
+                    onClick={() => {
+                      if (onNavigate) onNavigate();
+                      if (typeof window !== "undefined") {
+                        setTimeout(() => {
+                          window.dispatchEvent(new HashChangeEvent("hashchange"));
+                        }, 0);
+                      }
+                    }}
                     className={`flex items-center gap-2 font-medium transition-colors ${
                       isMobile
                         ? "px-2.5 py-1.5 text-[0.86rem] rounded"
@@ -150,6 +157,11 @@ export default function DocsLayout({
 
   const handleNavigate = (): void => {
     setMobileDocsOpen(false);
+    if (typeof window !== "undefined") {
+      setTimeout(() => {
+        window.dispatchEvent(new HashChangeEvent("hashchange"));
+      }, 0);
+    }
   };
 
   const currentFullPath = hash ? `${pathname}${hash}` : pathname;

@@ -1,4 +1,7 @@
+"use client";
+
 import React from "react";
+import { useInView } from "@/lib/useInView";
 
 export interface FeatureItem {
   id: string;
@@ -8,6 +11,8 @@ export interface FeatureItem {
 }
 
 export default function FeaturesGrid(): React.JSX.Element {
+  const { ref, isInView } = useInView<HTMLElement>();
+
   const features: FeatureItem[] = [
     {
       id: "youtube",
@@ -82,7 +87,12 @@ export default function FeaturesGrid(): React.JSX.Element {
   ];
 
   return (
-    <section className="py-14 sm:py-20 lg:py-24" id="features">
+    <section
+      ref={ref}
+      data-visible={isInView ? "true" : "false"}
+      className="py-14 sm:py-20 lg:py-24"
+      id="features"
+    >
       <div className="container">
         <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-1.5 sm:gap-4 border-b border-dashed border-subtle pb-3.5 mb-8 sm:mb-10">
           <h2 className="font-brand text-[clamp(1.5rem,4vw,2.25rem)] font-extrabold text-text-primary tracking-tight">
@@ -94,11 +104,12 @@ export default function FeaturesGrid(): React.JSX.Element {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3.5 sm:gap-6 lg:gap-7">
-          {features.map((feat) => (
+          {features.map((feat, idx) => (
             <div
               key={feat.id}
               id={feat.id}
-              className="bg-surface border border-subtle rounded-[6px] p-5 sm:p-7 transition-colors duration-150 hover:border-strong flex flex-col shadow-xs"
+              style={{ "--idx": idx } as React.CSSProperties}
+              className="reveal-card bg-surface border border-subtle rounded-[6px] p-5 sm:p-7 transition-colors duration-150 hover:border-strong flex flex-col shadow-xs"
             >
               <div className="text-sage mb-4 shrink-0 [&>svg]:w-6 [&>svg]:h-6">
                 {feat.icon}

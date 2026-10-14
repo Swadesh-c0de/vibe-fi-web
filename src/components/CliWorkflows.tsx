@@ -2,6 +2,7 @@
 
 import React, { useState, useMemo, useRef, useEffect } from "react";
 import { copyToClipboard } from "@/lib/clipboard";
+import { useInView } from "@/lib/useInView";
 
 export interface WorkflowCategory {
   id: string;
@@ -123,8 +124,18 @@ export default function CliWorkflows(): React.JSX.Element {
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [isSearchFocused, setIsSearchFocused] = useState<boolean>(false);
 
-  const sectionRef = useRef<HTMLElement>(null);
+  const { ref: sectionRef, isInView } = useInView<HTMLElement>();
   const searchInputRef = useRef<HTMLInputElement>(null);
+  const copyTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // Clean up copy timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (copyTimeoutRef.current) {
+        clearTimeout(copyTimeoutRef.current);
+      }
+    };
+  }, []);
 
   // Focus search bar with "/" when section is in view, and blur/clear on Escape
   useEffect(() => {
@@ -167,7 +178,7 @@ export default function CliWorkflows(): React.JSX.Element {
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [searchQuery]);
+  }, [searchQuery, sectionRef]);
 
   const filteredCommands = useMemo(() => {
     const q = searchQuery.trim().toLowerCase();
@@ -189,15 +200,24 @@ export default function CliWorkflows(): React.JSX.Element {
   const handleCopy = async (id: string, text: string): Promise<void> => {
     const success = await copyToClipboard(text);
     if (success) {
+      if (copyTimeoutRef.current) {
+        clearTimeout(copyTimeoutRef.current);
+      }
       setCopiedId(id);
-      setTimeout(() => {
+      copyTimeoutRef.current = setTimeout(() => {
         setCopiedId(null);
+        copyTimeoutRef.current = null;
       }, 2000);
     }
   };
 
   return (
-    <section ref={sectionRef} className="py-14 sm:py-20 lg:py-24 relative" id="cli">
+    <section
+      ref={sectionRef}
+      data-visible={isInView ? "true" : "false"}
+      className="py-14 sm:py-20 lg:py-24 relative"
+      id="cli"
+    >
       <div className="container">
         {/* Clean, Compact Section Header */}
         <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-1.5 sm:gap-4 border-b border-dashed border-subtle pb-3.5 mb-6 sm:mb-8">
@@ -273,15 +293,19 @@ export default function CliWorkflows(): React.JSX.Element {
           </div>
         </div>
 
-        {/* Grid of Command Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3.5 sm:gap-6 lg:gap-7">
-          {filteredCommands.map((cmd) => {
+        {/* Grid of Command Cards with tab-fade-in animation */}
+        <div
+          key={activeCategory}
+          className="tab-fade-in grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3.5 sm:gap-6 lg:gap-7"
+        >
+          {filteredCommands.map((cmd, idx) => {
             const isCopied = copiedId === cmd.id;
 
             return (
               <div
                 key={cmd.id}
-                className="bg-surface border border-subtle rounded-[6px] p-4.5 sm:p-6 lg:p-7 flex flex-col justify-between gap-3.5 sm:gap-5 transition-colors duration-150 min-w-0 max-w-full hover:border-strong md:hover:-translate-y-0.5 shadow-xs"
+                style={{ "--idx": idx } as React.CSSProperties}
+                className="reveal-card bg-surface border border-subtle rounded-[6px] p-4.5 sm:p-6 lg:p-7 flex flex-col justify-between gap-3.5 sm:gap-5 transition-colors duration-150 min-w-0 max-w-full hover:border-strong md:hover:-translate-y-0.5 shadow-xs"
               >
                 <div>
                   <div className="flex items-center justify-between mb-2 sm:mb-2.5">

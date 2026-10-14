@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { copyToClipboard } from "@/lib/clipboard";
 
 interface DocCodeBlockProps {
@@ -15,12 +15,27 @@ export default function DocCodeBlock({
   lang,
 }: DocCodeBlockProps): React.JSX.Element {
   const [copied, setCopied] = useState<boolean>(false);
+  const copyTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (copyTimeoutRef.current) {
+        clearTimeout(copyTimeoutRef.current);
+      }
+    };
+  }, []);
 
   const handleCopy = async (): Promise<void> => {
     const success = await copyToClipboard(code);
     if (success) {
+      if (copyTimeoutRef.current) {
+        clearTimeout(copyTimeoutRef.current);
+      }
       setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
+      copyTimeoutRef.current = setTimeout(() => {
+        setCopied(false);
+        copyTimeoutRef.current = null;
+      }, 2000);
     }
   };
 

@@ -19,18 +19,39 @@ export default function Navbar(): React.JSX.Element {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [mobileMenuOpen]);
 
+  // Lock body scroll when mobile menu is open
+  useEffect(() => {
+    if (!mobileMenuOpen) return;
+    const originalOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = originalOverflow;
+    };
+  }, [mobileMenuOpen]);
+
+  // Close mobile menu on desktop resize
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth >= 768) {
+        setMobileMenuOpen(false);
+      }
+    };
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
   return (
-    <header className="sticky top-0 z-[100] bg-overlay backdrop-blur-md border-b border-subtle transition-colors">
+    <header className="sticky top-0 z-[100] bg-canvas/95 md:bg-overlay md:backdrop-blur-md border-b border-subtle transition-colors">
       <div className="container flex items-center justify-between h-[60px] sm:h-[68px]">
         {/* Brand Logo */}
-        <Link href="/" className="flex items-center gap-2.5 sm:gap-3 shrink-0" aria-label="vibe-fi home">
+        <Link href="/" className="flex items-center gap-2.5 sm:gap-3 shrink-0 group" aria-label="vibe-fi home">
           <div className="flex items-center justify-center shrink-0">
             <svg width="32" height="32" viewBox="0 0 36 36" fill="none">
               <rect width="36" height="36" rx="9" className="logo-squircle-bg" />
-              <rect x="6.5" y="14" width="4" height="14" rx="2" fill="#7daea3" />
-              <rect x="13.5" y="6" width="4" height="22" rx="2" fill="#d4be98" />
-              <rect x="20.5" y="11" width="4" height="17" rx="2" fill="#e78a4e" />
-              <rect x="27.5" y="18" width="4" height="10" rx="2" fill="#a9b665" />
+              <rect x="6.5" y="14" width="4" height="14" rx="2" fill="#7daea3" className="logo-bar logo-bar-1" />
+              <rect x="13.5" y="6" width="4" height="22" rx="2" fill="#d4be98" className="logo-bar logo-bar-2" />
+              <rect x="20.5" y="11" width="4" height="17" rx="2" fill="#e78a4e" className="logo-bar logo-bar-3" />
+              <rect x="27.5" y="18" width="4" height="10" rx="2" fill="#a9b665" className="logo-bar logo-bar-4" />
             </svg>
           </div>
           <div className="font-brand font-black text-[1.3rem] sm:text-[1.6rem] tracking-tight leading-none whitespace-nowrap">
@@ -39,8 +60,8 @@ export default function Navbar(): React.JSX.Element {
           </div>
         </Link>
 
-        {/* Desktop Navigation Links */}
-        <nav className="hidden md:flex items-center gap-8">
+        {/* Desktop Navigation Links with responsive tablet spacing */}
+        <nav className="hidden md:flex items-center md:gap-5 lg:gap-8">
           <Link href="/#features" className="text-[0.95rem] font-semibold text-text-secondary hover:text-sage transition-colors">
             Features
           </Link>

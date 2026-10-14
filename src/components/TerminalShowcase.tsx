@@ -32,7 +32,7 @@ export default function TerminalShowcase(): React.JSX.Element {
   const showVideo = view === "demo" && isVideoReady;
 
   return (
-    <div className="w-full max-w-[860px] mx-auto">
+    <div className="w-full max-w-[860px] xl:max-w-[960px] mx-auto">
       {/* Sleek Minimalist Terminal Window */}
       <div className="rounded-[6px] sm:rounded-lg border border-[#3c3836] bg-[#141617] shadow-xl overflow-hidden">
         {/* Terminal Header Chrome (Refined, Minimal, No Dots) */}
