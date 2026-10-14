@@ -1,4 +1,3 @@
-import type { Metadata } from "next";
 import React from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -8,12 +7,6 @@ import FeaturesGrid from "@/components/FeaturesGrid";
 import CliWorkflows from "@/components/CliWorkflows";
 import HotkeysSection from "@/components/HotkeysSection";
 import CommunitySection from "@/components/CommunitySection";
-
-export const metadata: Metadata = {
-  title: "vibe-fi — Terminal Music Player",
-  description:
-    "Free, open-source terminal music player for Linux & macOS written in Go with Bubble Tea. Stream YouTube audio, watch real-time visualizers, and read synced lyrics in ~60 MB of RAM.",
-};
 
 export default function HomePage(): React.JSX.Element {
   return (
@@ -98,7 +91,10 @@ export default function HomePage(): React.JSX.Element {
         </section>
 
         {/* ─── LIVE SPECS & STATS STRIP ───────────────────────────── */}
-        <section className="border-y border-dashed border-subtle py-3.5 sm:py-4.5 bg-surface/20">
+        <section
+          className="border-y border-dashed border-subtle py-3.5 sm:py-4.5 bg-surface/20 animate-onload"
+          style={{ "--stagger": 5 } as React.CSSProperties}
+        >
           <div className="container max-w-[960px]">
             <div className="flex items-center justify-center gap-x-3 sm:gap-x-5 gap-y-2 flex-wrap text-[0.76rem] sm:text-[0.82rem] font-mono text-text-muted">
               <span className="text-text-secondary font-medium">
@@ -134,8 +130,11 @@ export default function HomePage(): React.JSX.Element {
 
         {/* ─── QUICK INSTALL WIDGET ───────────────────────────────── */}
         <section className="py-12 sm:py-18 lg:py-22" id="install">
-          <div className="container">
-            <div className="max-w-[860px] mx-auto mb-4 sm:mb-6 flex flex-col sm:flex-row sm:items-baseline justify-between gap-1.5 px-1">
+          <div
+            className="container animate-onload"
+            style={{ "--stagger": 6 } as React.CSSProperties}
+          >
+            <div className="max-w-[860px] xl:max-w-[960px] mx-auto mb-5 sm:mb-7 pb-3.5 border-b border-dashed border-subtle flex flex-col sm:flex-row sm:items-baseline justify-between gap-1.5">
               <h2 className="font-brand text-[clamp(1.5rem,4vw,2.25rem)] font-extrabold text-text-primary tracking-tight">
                 Quick Install
               </h2>
@@ -144,10 +143,7 @@ export default function HomePage(): React.JSX.Element {
               </span>
             </div>
 
-            <div
-              className="max-w-[860px] mx-auto animate-onload"
-              style={{ "--stagger": 3 } as React.CSSProperties}
-            >
+            <div className="max-w-[860px] xl:max-w-[960px] mx-auto">
               <InstallWidget />
             </div>
           </div>

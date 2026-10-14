@@ -53,11 +53,10 @@ export default function TerminalShowcase(): React.JSX.Element {
             <button
               type="button"
               onClick={() => handleSelectView("showcase")}
-              className={`px-2.5 py-0.5 rounded-[4px] font-mono transition-colors duration-150 cursor-pointer select-none leading-none ${
-                view === "showcase"
+              className={`px-2.5 py-0.5 rounded-[4px] font-mono transition-colors duration-150 cursor-pointer select-none leading-none ${view === "showcase"
                   ? "bg-[#282c2e] text-[#ebdbb2] font-semibold border border-[#3c3836] shadow-xs"
                   : "text-[#928374] hover:text-[#ebdbb2]"
-              }`}
+                }`}
               aria-pressed={view === "showcase"}
             >
               Showcase
@@ -66,21 +65,15 @@ export default function TerminalShowcase(): React.JSX.Element {
               type="button"
               onClick={() => handleSelectView("demo")}
               onMouseEnter={() => setHasLoadedDemo(true)}
+              onTouchStart={() => setHasLoadedDemo(true)}
               onFocus={() => setHasLoadedDemo(true)}
-              className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-[4px] font-mono transition-colors duration-150 cursor-pointer select-none leading-none ${
-                view === "demo"
+              className={`px-2.5 py-0.5 rounded-[4px] font-mono transition-colors duration-150 cursor-pointer select-none leading-none ${view === "demo"
                   ? "bg-[#282c2e] text-[#ebdbb2] font-semibold border border-[#3c3836] shadow-xs"
                   : "text-[#928374] hover:text-[#ebdbb2]"
-              }`}
+                }`}
               aria-pressed={view === "demo"}
             >
-              <span>Demo</span>
-              {view === "demo" && !isVideoReady && (
-                <span className="relative flex h-1.5 w-1.5" aria-label="Buffering demo">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-sage opacity-75" />
-                  <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-sage" />
-                </span>
-              )}
+              Demo
             </button>
           </div>
         </div>
@@ -93,9 +86,8 @@ export default function TerminalShowcase(): React.JSX.Element {
             fill
             unoptimized
             priority
-            className={`object-cover transition-opacity duration-300 ${
-              showVideo ? "opacity-0 pointer-events-none z-0" : "opacity-100 z-10"
-            }`}
+            className={`object-cover transition-opacity duration-300 ${showVideo ? "opacity-0 pointer-events-none z-0" : "opacity-100 z-10"
+              }`}
           />
           {hasLoadedDemo && (
             <video
@@ -108,9 +100,8 @@ export default function TerminalShowcase(): React.JSX.Element {
               onLoadedData={() => setIsVideoReady(true)}
               onCanPlay={() => setIsVideoReady(true)}
               aria-label="vibe-fi live terminal demo"
-              className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-300 ${
-                showVideo ? "opacity-100 z-10" : "opacity-0 pointer-events-none z-0"
-              }`}
+              className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-300 ${showVideo ? "opacity-100 z-10" : "opacity-0 pointer-events-none z-0"
+                }`}
             />
           )}
         </div>
