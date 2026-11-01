@@ -215,7 +215,7 @@ export default function CliWorkflows(): React.JSX.Element {
     <section
       ref={sectionRef}
       data-visible={isInView ? "true" : "false"}
-      className="py-14 sm:py-20 lg:py-24 relative"
+      className="py-14 sm:py-20 lg:py-24 relative overflow-hidden"
       id="cli"
     >
       <div className="container">
